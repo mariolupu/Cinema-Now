@@ -1,0 +1,95 @@
+﻿@model IEnumerable<WebApplication1.Models.Booking>
+
+@{
+    ViewData["Title"] = "My Ticket History";
+}
+
+<div class="container my-5 text-light" style="max-width: 900px;">
+    <div class="d-flex justify-content-between align-items-center mb-4 border-bottom border-secondary border-opacity-25 pb-3">
+        <div>
+            <h1 class="fw-bold text-white fs-3 m-0">🎟️ My Booking History</h1>
+            <p class="text-secondary small mb-0">View your active reservations, past movies, and payment status.</p>
+        </div>
+        <a asp-controller="Movies" asp-action="Index" class="btn btn-outline-light btn-sm rounded-1 px-3">
+            ← Back to Catalog
+        </a>
+    </div>
+
+    @if (Model != null && Model.Any())
+    {
+        <div class="row g-4">
+            @foreach (var item in Model)
+            {
+                <div class="col-12">
+                    <div class="card p-3 shadow-sm border border-secondary border-opacity-25 rounded-3 text-light" style="background-color: #12141a;">
+                        <div class="row align-items-center">
+                            <div class="col-md-2 text-center mb-3 mb-md-0">
+                                <img src="@(string.IsNullOrEmpty(item.Screening?.Movie?.ImageUrl) ? "https://picsum.photos/200/300" : item.Screening.Movie.ImageUrl)"
+                                     class="rounded-2 img-fluid shadow-sm" style="height: 100px; width: 75px; object-fit: cover;" alt="Poster" />
+                            </div>
+                            <div class="col-md-6 mb-3 mb-md-0">
+                                <h5 class="fw-bold text-white mb-1">@item.Screening?.Movie?.Title</h5>
+                                <p class="text-secondary small mb-1">
+                                    <i class="bi bi-calendar-event me-1 text-cinema-orange"></i> Showtime: <strong class="text-light">@item.Screening?.Showtime.ToString("dd MMM yyyy, HH:mm")</strong>
+                                </p>
+                                <p class="text-secondary small mb-1">
+                                    <i class="bi bi-geo-alt me-1 text-cinema-orange"></i> Hall: <strong class="text-light">@item.Screening?.HallName</strong>
+                                </p>
+                                <p class="text-secondary small mb-0">
+                                    <i class="bi bi-chair me-1 text-cinema-orange"></i> Seats: <strong class="text-cinema-orange">@item.SeatNumbers</strong>
+                                </p>
+                            </div>
+                            <div class="col-md-4 text-md-end d-flex flex-column align-items-md-end justify-content-center gap-2">
+                                @if (item.IsPaid)
+                                {
+                                    <span class="badge bg-success text-white px-3 py-2 fs-6 fw-semibold">Paid & Confirmed</span>
+                                }
+                                else
+                                {
+                                    <!-- Înlocuit galbenul copilăresc cu un portocaliu curat/neutru sau border discret -->
+                                    <span class="badge border border-warning text-warning bg-transparent px-3 py-2 fs-6 fw-semibold">Pending Payment</span>
+                                    <button class="btn btn-cinema-orange btn-sm fw-bold px-3 py-1 rounded-1">
+                                        💳 Pay with Stripe
+                                    </button>
+                                }
+                                <span class="text-secondary small">Booked on: @item.BookingDate.ToString("dd.MM.yyyy")</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="text-center py-5">
+            <div class="card p-5 border border-secondary border-opacity-25 rounded-3" style="background-color: #12141a;">
+                <h4 class="text-white mb-2">You have no ticket bookings yet.</h4>
+                <p class="text-secondary mb-4">Explore our catalog, pick your favorite movie, and reserve your seats online!</p>
+                <a asp-controller="Movies" asp-action="Index" class="btn btn-cinema-orange fw-bold px-4 py-2 rounded-1 mx-auto text-decoration-none" style="width: fit-content;">
+                    🎬 Explore Movies
+                </a>
+            </div>
+        </div>
+    }
+</div>
+
+<style>
+    .text-cinema-orange {
+        color: #ff6b00 !important;
+    }
+
+    .btn-cinema-orange {
+        background-color: #ff6b00 !important;
+        border: 1px solid #ff6b00 !important;
+        color: #000000 !important;
+        transition: all 0.2s ease-in-out;
+    }
+
+        .btn-cinema-orange:hover {
+            background-color: #e56000 !important;
+            border-color: #e56000 !important;
+            color: #000000 !important;
+            box-shadow: 0 0 10px rgba(255, 107, 0, 0.3);
+        }
+</style>

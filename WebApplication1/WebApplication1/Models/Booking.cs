@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Identity;
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace WebApplication1.Models
@@ -7,14 +8,15 @@ namespace WebApplication1.Models
     {
         public int Id { get; set; }
 
+        public string UserId { get; set; }
+        public IdentityUser? User { get; set; }
+
         public int ScreeningId { get; set; }
         public Screening? Screening { get; set; }
 
-        public string? UserId { get; set; }
-
-        [Required]
-        public string SeatNumbers { get; set; } = string.Empty; // ex: "A1, A2"
-
+        public string SeatNumbers { get; set; } = string.Empty;
         public DateTime BookingDate { get; set; } = DateTime.Now;
+        public bool IsPaid { get; set; } = false;
+        public decimal TotalAmount { get; set; } = 0;
     }
 }

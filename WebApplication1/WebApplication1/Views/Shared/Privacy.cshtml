@@ -1,0 +1,64 @@
+﻿@{
+    ViewData["Title"] = "Privacy Policy";
+}
+
+<div class="container my-5 text-light" style="max-width: 800px;">
+    <div class="mb-4">
+        <h1 class="display-5 fw-bold text-white border-start border-4 border-cinema-orange ps-3">🔒 Privacy Policy</h1>
+        <p class="text-secondary small mt-2">Last updated: @DateTime.Now.ToString("MMMM yyyy")</p>
+    </div>
+
+    <div class="card p-4 shadow-sm border border-secondary border-opacity-25 rounded-3 mb-4" style="background-color: #12141a;">
+        <h4 class="text-white fw-bold mb-3">1. Information We Collect</h4>
+        <p class="text-secondary">
+            When you register an account, browse movies, or reserve seats on our platform, we may collect personal information such as your name, email address, account credentials, and ticket booking history.
+        </p>
+
+        <h4 class="text-white fw-bold mb-3 mt-4">2. How We Use Your Data</h4>
+        <p class="text-secondary">
+            Your data is strictly used to:
+        </p>
+        <ul class="text-secondary">
+            <li>Process and confirm your cinema seat reservations.</li>
+            <li>Send you booking confirmations and showtime updates.</li>
+            <li>Manage your user account and secure authentication via ASP.NET Core Identity.</li>
+            <li>Improve our website performance and movie catalog recommendations.</li>
+        </ul>
+
+        <h4 class="text-white fw-bold mb-3 mt-4">3. Security of Your Data</h4>
+        <p class="text-secondary">
+            We implement industry-standard security measures, password hashing, and encrypted database connections to ensure your personal information remains safe and protected against unauthorized access.
+        </p>
+
+        <h4 class="text-white fw-bold mb-3 mt-4">4. Contact Us</h4>
+        <p class="text-secondary mb-0">
+            If you have any questions regarding this Privacy Policy or wish to delete your account data, please contact our support team at <span class="text-cinema-orange fw-bold">support@cinemacity.local</span>.
+        </p>
+    </div>
+
+    <div>
+        <a asp-controller="Movies" asp-action="Index" class="btn btn-cinema-orange fw-bold px-4 py-2 rounded-1">
+            ← Back to Movies Catalog
+        </a>
+    </div>
+</div>
+
+<style>
+    .text-cinema-orange {
+        color: #ff6b00 !important;
+    }
+
+    .btn-cinema-orange {
+        background-color: #ff6b00 !important;
+        border: 1px solid #ff6b00 !important;
+        color: #fff !important;
+        transition: all 0.2s ease-in-out;
+    }
+
+        .btn-cinema-orange:hover {
+            background-color: #e56000 !important;
+            border-color: #e56000 !important;
+            color: #fff !important;
+            box-shadow: 0 0 12px rgba(255, 107, 0, 0.4);
+        }
+</style>

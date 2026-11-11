@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
 using WebApplication1.Data;
 using WebApplication1.Models;
 using WebApplication1.Services;
@@ -185,6 +186,17 @@ namespace WebApplication1.Controllers
         private bool MovieExists(int? id)
         {
             return _context.Movies.Any(e => e.Id == id);
+        }
+
+        public IActionResult Privacy()
+        {
+            return View("~/Views/Shared/Privacy.cshtml"); // Sau simplu return View(); dacă e în Views/Movies
+        }
+
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult Error()
+        {
+            return View("~/Views/Shared/Error.cshtml", new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
 }

@@ -79,6 +79,20 @@ namespace WebApplication1.Controllers
             return RedirectToAction("Confirmation", new { id = booking.Id });
         }
 
+        public async Task<IActionResult> MyBookings()
+        {
+            var userId = _userManager.GetUserId(User);
+
+            var userBookings = await _context.Bookings
+                .Include(b => b.Screening)
+                .ThenInclude(s => s.Movie)
+                .Where(b => b.UserId == userId)
+                .OrderByDescending(b => b.BookingDate)
+                .ToListAsync();
+
+            return View(userBookings);
+        }
+
         public async Task<IActionResult> Confirmation(int id)
         {
             var booking = await _context.Bookings
