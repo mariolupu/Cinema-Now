@@ -18,5 +18,7 @@ namespace WebApplication1.Models
         public DateTime BookingDate { get; set; } = DateTime.Now;
         public bool IsPaid { get; set; } = false;
         public decimal TotalAmount { get; set; } = 0;
+
+        public string? PaymentMethod { get; set; } = "Cash";
     }
 }
