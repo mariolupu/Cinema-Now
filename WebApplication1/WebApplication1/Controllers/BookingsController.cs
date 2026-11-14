@@ -2,11 +2,10 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Stripe.Checkout;
 using WebApplication1.Data;
-using WebApplication1.Exceptions;
 using WebApplication1.Models;
-using static System.Collections.Specialized.BitVector32;
+using WebApplication1.Exceptions;
+using Stripe.Checkout;
 
 namespace WebApplication1.Controllers
 {
