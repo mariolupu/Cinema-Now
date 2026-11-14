@@ -60,7 +60,7 @@
                     color: #ff6b00 !important;
                 }
 
-            /* Admin Panel Button: Portocaliu permanent, fără border, bold la hover */
+            /* Admin Panel Button */
             .btn-admin-panel {
                 color: #ff6b00 !important;
                 font-weight: 600;
@@ -74,7 +74,7 @@
                     text-shadow: 0 0 10px rgba(255, 107, 0, 0.6);
                 }
 
-            /* Buton principal portocaliu curat cu text negru pentru contrast maxim */
+            /* Buton principal portocaliu */
             .btn-cinema-orange {
                 background-color: #ff6b00 !important;
                 border: 1px solid #ff6b00 !important;
@@ -162,6 +162,81 @@
                                         <span class="text-secondary text-uppercase fw-bold" style="font-size: 0.6rem; letter-spacing: 0.5px;">My Account</span>
                                         <span class="text-light small">@User.Identity?.Name</span>
                                     </div>
+                                </a>
+                            </li>
+
+                            <!-- Logout -->
+                            <li class="nav-item ms-1">
+                                <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Movies", new { area = "" })">
+                                    <button type="submit" class="btn btn-outline-light btn-sm rounded-1 px-3 fw-semibold shadow-sm">
+                                        <i class="bi bi-box-arrow-right me-1"></i> Logout
+                                    </button>
+                                </form>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-white fw-semibold px-3 hover-orange" asp-area="Identity" asp-page="/Account/Register">Register</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="btn btn-cinema-orange btn-sm fw-bold rounded-1 px-3" asp-area="Identity" asp-page="/Account/Login">
+                                    <i class="bi bi-box-arrow-in-right me-1"></i> Login
+                                </a>
+                            </li>
+                        }
+                    </ul>
+
+                    <!-- Dreapta: My Bookings, Cont + Poză Profil și Login/Logout -->
+                    <ul class="navbar-nav align-items-center gap-2 ms-auto">
+                        @if (SignInManager.IsSignedIn(User))
+                        {
+                            <!-- My Bookings -->
+                            <li class="nav-item">
+                                <a class="nav-link text-light fw-semibold d-flex align-items-center gap-1 px-2 hover-orange"
+                                   asp-area=""
+                                   asp-controller="Bookings"
+                                   asp-action="MyBookings"
+                                   title="My Ticket History">
+                                    <i class="bi bi-ticket-perforated me-1 fs-5"></i>
+                                    <span>My Bookings</span>
+                                </a>
+                            </li>
+
+                            <!-- My Account (Email) + Poză Profil + Buton Editare -->
+                            <li class="nav-item d-flex align-items-center gap-2 border-start border-secondary border-opacity-25 ps-3">
+                                <a class="nav-link text-white fw-semibold d-flex align-items-center gap-2 p-0 hover-orange"
+                                   asp-area="Identity"
+                                   asp-page="/Account/Manage/Index"
+                                   title="Manage Account">
+                                    @{
+                                        var currentUserId = UserManager.GetUserId(User);
+                                        var avatarDir = System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory(), "wwwroot", "uploads", "avatars");
+                                        var avatarFile = System.IO.Directory.Exists(avatarDir)
+                                            ? System.IO.Directory.GetFiles(avatarDir, $"{currentUserId}.*").FirstOrDefault()
+                                            : null;
+                                    }
+                                    @if (avatarFile != null)
+                                    {
+                                        <img src="/uploads/avatars/@System.IO.Path.GetFileName(avatarFile)" alt="Avatar"
+                                             class="rounded-circle border" style="width: 32px; height: 32px; object-fit: cover; border-color: #ff6b00 !important;" />
+                                    }
+                                    else
+                                    {
+                                        <i class="bi bi-person-fill text-secondary fs-5"></i>
+                                    }
+                                    <div class="d-flex flex-column lh-1">
+                                        <span class="text-secondary text-uppercase fw-bold" style="font-size: 0.6rem; letter-spacing: 0.5px;">My Account</span>
+                                        <span class="text-light small">@User.Identity?.Name</span>
+                                    </div>
+                                </a>
+
+                                <!-- Buton editare poză profil -->
+                                <a asp-area="" asp-controller="Profile" asp-action="Avatar"
+                                   class="btn btn-sm p-1 px-2 border border-secondary border-opacity-50 rounded-1 hover-orange"
+                                   style="color: #ff6b00;"
+                                   title="Edit Profile Picture">
+                                    <i class="bi bi-camera-fill small"></i>
                                 </a>
                             </li>
 
