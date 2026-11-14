@@ -52,9 +52,26 @@
                     @Html.Raw(RenderSeatRow("F", 16, bookedSeats))
                 </div>
 
-                <!-- Panou de confirmare stilizat Gri Închis -->
+                <!-- Panou de confirmare & Alegere Metodă de Plată -->
                 <div class="card border border-secondary border-opacity-25 shadow-lg p-4 w-75 mx-auto rounded-3 text-center mb-4" style="background-color: #161920;">
                     <h5 class="text-white mb-3">Selected Seats: <span id="selectedSeatsText" class="text-cinema-orange fw-bold">None</span></h5>
+
+                    <!-- Alegere metodă de plată -->
+                    <div class="mb-4 d-flex justify-content-center gap-4 text-start">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="paymentMethod" id="payStripe" value="Stripe" checked>
+                            <label class="form-check-label text-light fw-semibold small" for="payStripe">
+                                💳 Pay Online (Stripe)
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="paymentMethod" id="payCash" value="Cash">
+                            <label class="form-check-label text-light fw-semibold small" for="payCash">
+                                🎟️ Pay at Counter (Cash)
+                            </label>
+                        </div>
+                    </div>
+
                     <button type="submit" class="btn btn-cinema-orange btn-lg px-5 py-2 rounded-1 fw-bold shadow-sm" onclick="prepareSubmit()">
                         Confirm Booking 🚀
                     </button>
@@ -125,7 +142,6 @@
         border-radius: 4px;
     }
 
-    /* Stilizare curată pentru butoanele de scaune (Eliminat aspectul pixelat prin raze de 4px și anti-aliasing) */
     .seat-btn {
         width: 38px;
         height: 38px;
@@ -139,7 +155,6 @@
         box-shadow: none !important;
     }
 
-    /* Scaune Disponibile - Gri Închis fin */
     .seat-available {
         background-color: #262933 !important;
         color: #ffffff !important;
@@ -154,7 +169,6 @@
             box-shadow: 0 4px 12px rgba(255, 107, 0, 0.4) !important;
         }
 
-    /* Scaune Selectate - Portocaliu Vibrant */
     .seat-selected {
         background-color: #ff6b00 !important;
         color: #ffffff !important;
@@ -163,7 +177,6 @@
         box-shadow: 0 4px 12px rgba(255, 107, 0, 0.6) !important;
     }
 
-    /* Scaune Rezervate - Negru Complet */
     .seat-occupied {
         background-color: #000000 !important;
         color: #444444 !important;
