@@ -48,9 +48,12 @@
                                 {
                                     <!-- Înlocuit galbenul copilăresc cu un portocaliu curat/neutru sau border discret -->
                                     <span class="badge border border-warning text-warning bg-transparent px-3 py-2 fs-6 fw-semibold">Pending Payment</span>
-                                    <button class="btn btn-cinema-orange btn-sm fw-bold px-3 py-1 rounded-1">
-                                        💳 Pay with Stripe
-                                    </button>
+                                    <form asp-controller="Bookings" asp-action="CreateCheckoutSession" method="post">
+                                        <input type="hidden" name="bookingId" value="@item.Id" />
+                                        <button type="submit" class="btn btn-cinema-orange btn-sm fw-bold px-3 py-1 rounded-1">
+                                            💳 Pay with Stripe
+                                        </button>
+                                    </form>
                                 }
                                 <span class="text-secondary small">Booked on: @item.BookingDate.ToString("dd.MM.yyyy")</span>
                             </div>

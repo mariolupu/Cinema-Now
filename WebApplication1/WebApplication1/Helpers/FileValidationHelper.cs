@@ -18,7 +18,7 @@ namespace WebApplication1.Helpers
 
             if (file.Length > MaxFileSizeBytes)
             {
-                return (false, "File size exceeds the maximum allowed limit of 12 MB.");
+                return (false, "Fileee size exceeds the maximum allowed limit of 12 MB.");
             }
 
             var extension = Path.GetExtension(file.FileName).ToLowerInvariant();

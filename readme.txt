@@ -1,3 +1,93 @@
 cont admin:
 admin@cinema.com
 Vb@2s6XQahut@4E
+
+
+
+
+
+BAREM:
+
+Nota 2 (Done)
+
+1) Baza de date relationala proiectata corect (3NF) folosind Entity Framework Core.
+2) Minimum 4 scenarii functionale: vizualizare filme, rezervare bilete (Cash/Stripe),
+gestiune profil (avatar) si administrare filme.
+3) Arhitectura software MVC (Model-View-Controller) impreuna cu pattern-ul
+de servicii (IMovieService).
+4) Elemente multimedia prezente: imagini (postere/avatare), tabele de date
+si linkuri de navigare.
+
+
+Nota 3 (Done)
+
+1) Utilizarea claselor pentru entitati (Movie, Screening, Booking),
+servicii (MovieService) si controllere.
+2) Utilizarea interfețelor (IMovieService) pentru separarea logicii
+de business (Dependency Injection).
+3) Autentificarea utilizatorilor implementata complet prin ASP.NET Core Identity.
+4) Autorizarea pe bază de roluri (Admin / User) prin atribute de securitate [Authorize].
+
+
+Nota 4 (3/4 Done. 4) trebuie verificat) 
+
+1) Mostenire: Implementata printr-o ierarhie de clase personalizate pentru exceptii,
+unde clasa SeatUnavailableException mosteneste clasa parinte CinemaException.
+2) Gestionarea exceptiilor: Sunt tratate multiple tipuri de exceptii in blocuri
+try-catch dedicate (exceptii custom de business: SeatUnavailableException,
+CinemaException, alaturi de exceptia generala de sistem Exception).
+3) Carusel de imagini: Implementat si functional pe pagina principala (Index)
+pentru prezentarea dinamica a posterelor si filmelor.
+4) Animatii CSS: Efecte vizuale interactive de tranzitie si hover aplicate
+pe butoane, postere si elementele de selectie a scaunelor.
+
+
+Nota 5 ( 1/2 Done. trebuie verificat telefon la 2) )
+
+1) Organizarea stilurilor CSS: Proiectul contine multiple fisiere CSS dedicate
+ (site.css, stiluri pentru pagina principala si bootstrap.min.css)
+ si utilizeaza peste 25 de proprietati CSS distincte (radial-gradient
+ backdrop-filter, transform, transition, box-shadow, filter blur, variabile CSS).
+2) Design responsive: Interfata se adapteaza automat pe desktop,
+tableta si mobil prin sistemul Bootstrap Grid (container, row, col-lg),
+unitati relative (%, rem) si optimizari tactile (-webkit-overflow-scrolling: touch)
+pentru carusel si slider-ul de filme.
+
+
+
+
+
+
+
+Nota 7
+
+1) Logging:
+- La rezervari BookingsController;
+- La Profilul Utilizatorului ProfileController;
+
+
+Nota 8
+
+
+
+
+
+Nota 9 (Done)
+1) Am folosit [ValidateAntiForgeryToken] pe toate acțiunile de tip 
+[HttpPost] (în Controllere) și am lăsat formularele HTML să genereze 
+tokenul de securitate.
+
+2) M-am bazat pe codarea automată nativă din motorul de randare Razor al ASP.NET Core.
+Oriunde afișăm date introduse de user (ex: @User.Identity?.Name),
+sintaxa @ din Razor face HTML encoding automat, transformând scripturile periculoase
+ in text inofensiv. Nu am folosit nicăieri @Html.Raw() pe input-uri nesecurizate.
+
+3) Nu am scris niciodată interogări SQL brute (RAW SQL) concatenate cu string-uri.
+Toate interogările folosesc Entity Framework Core și LINQ.
+În controllere (ex: .FirstOrDefaultAsync(...), .Where(...)). EF Core folosește
+automat interogări parametrizate (Parameterized Queries),
+blocând complet orice tentativă de SQL Injection.
+
+4) Done. Helpers/FileValidationHelper.cs MaxFileSizeBytes = 12 * 1024 * 1024
+
+5) Done. Helpers/FileValidationHelper.cs
