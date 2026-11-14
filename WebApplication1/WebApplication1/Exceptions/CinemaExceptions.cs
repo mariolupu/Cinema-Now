@@ -10,6 +10,6 @@ namespace WebApplication1.Exceptions
     public class SeatUnavailableException : CinemaException
     {
         public SeatUnavailableException(string seatNumber)
-            : base($"Seat {seatNumber} is already booked or unavailable.") { }
+            : base($"Seat {seatNumber} is already booked or unavailableeee.") { }
     }
 }
