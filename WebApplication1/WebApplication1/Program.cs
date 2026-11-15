@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using WebApplication1.Data;
 using Stripe;
 using Serilog;
+using System.Threading.RateLimiting;
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
@@ -23,14 +24,38 @@ try
     builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
     builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
-        .AddRoles<IdentityRole>()
-        .AddEntityFrameworkStores<ApplicationDbContext>();
+    .AddRoles<IdentityRole>()
+    .AddEntityFrameworkStores<ApplicationDbContext>();
 
     builder.Services.AddControllersWithViews();
 
     builder.Services.AddScoped<WebApplication1.Services.IMovieService, WebApplication1.Services.MovieService>();
 
     StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
+
+    builder.Services.AddRateLimiter(options =>
+    {
+        options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+
+        options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(httpContext =>
+            RateLimitPartition.GetFixedWindowLimiter(
+                partitionKey: httpContext.Connection.RemoteIpAddress?.ToString() ?? httpContext.Request.Headers.Host.ToString(),
+                factory: partition => new FixedWindowRateLimiterOptions
+                {
+                    AutoReplenishment = true,
+                    PermitLimit = 100,
+                    QueueLimit = 0,
+                    Window = TimeSpan.FromMinutes(1)
+                }));
+
+        options.OnRejected = async (context, token) =>
+        {
+            context.HttpContext.Response.StatusCode = StatusCodes.Status429TooManyRequests;
+            await context.HttpContext.Response.WriteAsync(
+                "Too many requests. You have exceeded the limit of 100 requests per minute. Please try again later.",
+                cancellationToken: token);
+        };
+    });
 
     var app = builder.Build();
 
@@ -52,6 +77,8 @@ try
 
     app.MapStaticAssets();
 
+    app.UseRateLimiter();
+
     app.MapControllerRoute(
         name: "default",
         pattern: "{controller=Movies}/{action=Index}/{id?}")
@@ -69,5 +96,4 @@ catch (Exception ex)
 finally
 {
     Log.CloseAndFlush();
-
 }

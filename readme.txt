@@ -84,6 +84,7 @@ folosind Stripe API, cu gestionarea sigura a cheilor API prin .NET User Secrets.
 
 
 Nota 9 (Done)
+
 1) Am folosit [ValidateAntiForgeryToken] pe toate acțiunile de tip 
 [HttpPost] (în Controllere) și am lăsat formularele HTML să genereze 
 tokenul de securitate.
@@ -102,3 +103,21 @@ blocând complet orice tentativă de SQL Injection.
 4) Done. Helpers/FileValidationHelper.cs MaxFileSizeBytes = 12 * 1024 * 1024
 
 5) Done. Helpers/FileValidationHelper.cs
+
+
+
+
+
+Nota 10
+
+1) Este implementat un mecanism global de rate limiting care limiteaza
+la maximum 100 de cereri consecutive per IP intr-un interval de un minut.
+La depasirea limitei, cererile suplimentare
+sunt blocate temporar cu codul HTTP 429 Too Many Requests.
+2) Este implementat un sistem CAPTCHA in pagina de inregistrare pentru validarea
+interactiunilor umane si limitarea interactiunilor automate, blocand scripturile
+si botii sa creeze conturi in mod automat.
+3) Sunt utilizate mecanisme de filtrare a fisierelor incarcate prin limitarea dimensiunii
+(maximum 12 MB) si restrictionarea extensiilor permise (.pdf, .jpg, .jpeg, .png), masuri
+care reduc riscul de injectare a continutului ascuns sau datelor steganografice
+in cadrul platformei. Helpers/FileValidationHelper.cs

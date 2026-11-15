@@ -1,0 +1,145 @@
+@page
+@model RegisterModel
+@{
+    ViewData["Title"] = "Register";
+}
+<style>
+    .field-validation-error, span.text-danger {
+        font-size: 0.82rem !important;
+        font-weight: 600;
+        letter-spacing: 0.3px;
+        margin-top: 3px;
+        display: block;
+    }
+
+    .cinema-hero-img {
+        background: linear-gradient(to right, #000000 0%, rgba(0,0,0,0.5) 25%, transparent 100%), url('https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=1920&auto=format&fit=crop') center/cover no-repeat;
+    }
+
+    .btn-cinema-orange {
+        background-color: #ff6b00 !important;
+        border-color: #ff6b00 !important;
+        color: #000000 !important;
+    }
+
+        .btn-cinema-orange:hover {
+            background-color: #e56000 !important;
+            border-color: #e56000 !important;
+            color: #000000 !important;
+        }
+
+    /* Setări pentru form-floating pe fundal negru ca să nu se suprapună eticheta peste text */
+    .form-floating > .form-control {
+        background-color: #121212 !important;
+        color: #ffffff !important;
+        padding-top: 1.625rem;
+        padding-bottom: 0.625rem;
+    }
+
+        .form-floating > .form-control:focus {
+            background-color: #121212 !important;
+            color: #ffffff !important;
+            border-color: #ff6b00 !important;
+            box-shadow: 0 0 0 0.25rem rgba(255, 107, 0, 0.25);
+        }
+
+    /* Curățăm fundalul etichetei flotante ca să nu mai apară pătratul de fundal */
+    .form-floating > label {
+        color: rgba(255, 255, 255, 0.5) !important;
+        padding: 1rem 0.75rem;
+        background-color: transparent !important;
+    }
+
+    .form-floating > .form-control:focus ~ label,
+    .form-floating > .form-control:not(:placeholder-shown) ~ label {
+        color: rgba(255, 255, 255, 0.85) !important;
+        transform: scale(0.85) translateY(-0.75rem) translateX(0.15rem);
+        background-color: transparent !important;
+    }
+</style>
+<div class="container my-4 my-lg-5">
+    <div class="row w-100 justify-content-center align-items-center mx-auto" style="max-width: 1100px;">
+        <div class="col-12 p-0">
+            <div class="row g-0 align-items-stretch">
+
+                <div class="col-md-5 p-4 p-lg-5 d-flex flex-column justify-content-between bg-black rounded-start-4">
+                    <div>
+                        <div class="mb-4 text-center text-md-start">
+                            <h3 class="fw-bold text-light mb-2 d-flex align-items-center justify-content-center justify-content-md-start gap-2">
+                                <span>🎬</span> Create Account
+                            </h3>
+                            <p class="text-light opacity-75" style="font-size: 0.9rem;">Join Cinema Now to start booking tickets.</p>
+                        </div>
+
+                        <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
+                            <div asp-validation-summary="ModelOnly" class="text-danger mb-3" role="alert" style="font-size: 0.85rem; font-weight: bold;"></div>
+
+                            <div class="form-floating mb-3">
+                                <input asp-for="Input.Email" class="form-control border-secondary" style="font-size: 0.95rem;" autocomplete="username" aria-required="true" placeholder="name@example.com" />
+                                <label asp-for="Input.Email">Email address</label>
+                                <span asp-validation-for="Input.Email" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-floating mb-3">
+                                <input asp-for="Input.Password" class="form-control border-secondary" style="font-size: 0.95rem;" autocomplete="new-password" aria-required="true" placeholder="password" />
+                                <label asp-for="Input.Password">Password</label>
+                                <span asp-validation-for="Input.Password" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-floating mb-3">
+                                <input asp-for="Input.ConfirmPassword" class="form-control border-secondary" style="font-size: 0.95rem;" autocomplete="new-password" aria-required="true" placeholder="password" />
+                                <label asp-for="Input.ConfirmPassword">Confirm Password</label>
+                                <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+                            </div>
+
+                            <div class="bg-dark bg-opacity-75 p-3 mb-3 rounded-3 border border-secondary border-opacity-25">
+                                <div class="d-flex align-items-center justify-content-between mb-2">
+                                    <span class="text-light fw-semibold" style="font-size: 0.88rem;">
+                                        <i class="bi bi-shield-check text-warning me-1"></i> Security CAPTCHA
+                                    </span>
+                                    <span class="badge bg-secondary text-light fw-bold" style="font-size: 0.65rem;">ANTI-BOT</span>
+                                </div>
+                                <p class="text-light opacity-75 mb-2" style="font-size: 0.85rem;">Please solve: <strong class="text-light">@Model.CaptchaQuestion</strong></p>
+
+                                <div class="input-group">
+                                    <input asp-for="Input.CaptchaAnswer" class="form-control bg-black text-light border-secondary text-center fw-bold py-2" style="font-size: 0.95rem;" autocomplete="off" placeholder="Your answer" />
+                                </div>
+                                <input type="hidden" asp-for="CaptchaExpected" value="@Model.CaptchaExpected" />
+                                <span asp-validation-for="Input.CaptchaAnswer" class="text-danger"></span>
+                            </div>
+
+                            <div class="mb-3 text-center text-md-start" style="font-size: 0.88rem;">
+                                <span class="text-light opacity-75">Already have an account? </span>
+                                <a asp-page="./Login" class="fw-semibold text-decoration-none" style="color: #ff6b00;">Log in now</a>
+                            </div>
+
+                            <button id="registerSubmit" type="submit" class="w-100 btn btn-cinema-orange fw-bold py-3 shadow-sm" style="font-size: 0.95rem;">
+                                <i class="bi bi-person-plus-fill me-1"></i> Register
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="text-center mt-4">
+                        <p class="text-light opacity-75 mb-0" style="font-size: 0.85rem;">
+                            Cinema Now © 2026 - Secure Platform
+                        </p>
+                    </div>
+                </div>
+
+                <div class="col-md-7 d-none d-md-flex position-relative cinema-hero-img rounded-end-4 shadow-lg flex-column justify-content-end p-5" style="min-height: 560px;">
+                    <div class="position-absolute top-0 start-0 w-100 h-100 rounded-end-4" style="background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.4) 60%, transparent 100%); z-index: 1;"></div>
+                    <div class="position-relative" style="z-index: 2;">
+                        <span class="badge bg-warning text-dark fw-bold mb-2 px-2.5 py-1" style="font-size: 0.75rem;">EXCLUSIVE CINEMA EXPERIENCE</span>
+                        <h2 class="text-white fw-bold mb-2 display-6">Step into the Ultimate Movie World</h2>
+                        <p class="text-light opacity-85 mb-0" style="font-size: 0.95rem; max-width: 450px;">Book tickets seamlessly, explore premium screenings, and manage your watchlist instantly.</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
