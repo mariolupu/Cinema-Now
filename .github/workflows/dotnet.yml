@@ -20,10 +20,10 @@ jobs:
         dotnet-version: '10.0.x'
 
     - name: Restore dependencies
-      run: dotnet restore WebApplication1.sln
+      run: dotnet restore WebApplication1/WebApplication1.sln
 
     - name: Build
-      run: dotnet build WebApplication1.sln --no-restore
+      run: dotnet build WebApplication1/WebApplication1.sln --no-restore
 
     - name: Test
-      run: dotnet test WebApplication1.sln --no-build --verbosity normal
+      run: dotnet test WebApplication1/WebApplication1.sln --no-build --verbosity normal
