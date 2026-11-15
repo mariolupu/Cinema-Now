@@ -17,13 +17,13 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: 10.0.x
+        dotnet-version: '10.0.x'
 
     - name: Restore dependencies
-      run: dotnet restore NumeleSolutiei.sln
+      run: dotnet restore WebApplication1.sln
 
     - name: Build
-      run: dotnet build NumeleSolutiei.sln --no-restore
+      run: dotnet build WebApplication1.sln --no-restore
 
     - name: Test
-      run: dotnet test NumeleSolutiei.sln --no-build --verbosity normal
+      run: dotnet test WebApplication1.sln --no-build --verbosity normal
