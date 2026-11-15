@@ -121,3 +121,11 @@ si botii sa creeze conturi in mod automat.
 (maximum 12 MB) si restrictionarea extensiilor permise (.pdf, .jpg, .jpeg, .png), masuri
 care reduc riscul de injectare a continutului ascuns sau datelor steganografice
 in cadrul platformei. Helpers/FileValidationHelper.cs
+4) Sunt configurate si transmise global antetele de securitate HTTP
+ (X-Content-Type-Options, X-Frame-Options, X-XSS-Protection, Content-Security-Policy, 
+Referrer-Policy), astfel incat analiza cu extensia Security Headers Inspector sa 
+indice calificativul A.
+5) Accesul neautorizat la fisierele sensibile de configurare,
+loguri sau baze de date si listarea directoarelor (Directory Indexing)
+sunt restrictionate prin intermediul regulilor configurate in fisierul .htaccess
+plasat in directorul radacina al aplicatiei.

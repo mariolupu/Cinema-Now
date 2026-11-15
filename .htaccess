@@ -1,0 +1,6 @@
+<FilesMatch "^\.|\.(env^|config^|json^|sql^|log^|bak^)$"> 
+    Order allow,deny 
+    Deny from all 
+</FilesMatch> 
+ 
+Options -Indexes
