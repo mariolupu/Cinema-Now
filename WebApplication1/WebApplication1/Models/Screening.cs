@@ -17,6 +17,6 @@ namespace WebApplication1.Models
         public string HallName { get; set; } = "Hall 1";
 
         [Column(TypeName = "decimal(18,2)")]
-        public decimal Price { get; set; } = 30.00m; 
+        public decimal Price { get; set; } = 5.00m; 
     }
 }
