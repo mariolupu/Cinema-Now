@@ -8,24 +8,24 @@ namespace WebApplication1.Models
 
         [Required]
         [Display(Name = "Badge / Type")]
-        public string BadgeText { get; set; } // e.g. "🎓 STUDENT / YOUTH", "🔥 PROMO DAY", "✨ VIP"
+        public string BadgeText { get; set; } 
 
         [Required]
-        public string Title { get; set; } // e.g. "Student Menu: Popcorn + Soda"
+        public string Title { get; set; }
 
-        public string Subtitle { get; set; } // e.g. "Valid on weekdays with student ID"
+        public string Subtitle { get; set; } 
 
         [Required]
-        public string Description { get; set; } // e.g. "Show your student card at the bar to claim 20% off!"
+        public string Description { get; set; } 
 
         [Display(Name = "Discount Percentage")]
-        public int? DiscountPercentage { get; set; } // e.g. 20 (for 20%)
+        public int? DiscountPercentage { get; set; } 
 
         [Display(Name = "Fixed Price (RON)")]
-        public decimal? FixedPrice { get; set; } // e.g. 15 (for 15 LEI)
+        public decimal? FixedPrice { get; set; }
 
         [Display(Name = "Applicable Days")]
-        public string ApplicableDays { get; set; } // e.g. "Monday, Tuesday" or "Weekend"
+        public string ApplicableDays { get; set; } 
 
         [Required]
         [Display(Name = "Image URL")]

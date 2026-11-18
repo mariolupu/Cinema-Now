@@ -2,57 +2,143 @@
     ViewData["Title"] = "Edit Profile Picture";
 }
 
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-md-5">
-            <div class="card border border-secondary border-opacity-25 shadow-lg" style="background-color: #0e0e0e;">
-                <div class="card-body p-4 text-center">
-                    <h4 class="text-white fw-bold mb-1">Profile Picture</h4>
-                    <p class="text-secondary small mb-4">Allowed formats: .jpg, .jpeg, .png (Max 12 MB)</p>
-
-                    @if (TempData["Error"] != null)
-                    {
-                        <div class="alert alert-danger py-2 small">@TempData["Error"]</div>
-                    }
-                    @if (TempData["Success"] != null)
-                    {
-                        <div class="alert alert-success py-2 small">@TempData["Success"]</div>
-                    }
-
-                    <div class="mb-4">
-                        @if (ViewBag.AvatarUrl != null)
-                        {
-                            <img src="@ViewBag.AvatarUrl" alt="Avatar" class="rounded-circle border border-2 shadow-sm"
-                                 style="width: 115px; height: 115px; object-fit: cover; border-color: #ff6b00 !important;" />
-                        }
-                        else
-                        {
-                            <div class="rounded-circle d-inline-flex align-items-center justify-content-center border border-secondary"
-                                 style="width: 115px; height: 115px; background-color: #1a1a1a;">
-                                <i class="bi bi-person-fill text-secondary" style="font-size: 3rem;"></i>
-                            </div>
-                        }
-                    </div>
-
-                    <form asp-controller="Profile" asp-action="Avatar" method="post" enctype="multipart/form-data">
-                        <div class="mb-3 text-start">
-                            <input type="file" name="avatarFile" accept=".jpg,.jpeg,.png" class="form-control bg-dark text-light border-secondary" required />
-                        </div>
-                        <button type="submit" class="btn btn-cinema-orange w-100 py-2 mb-2">
-                            <i class="bi bi-upload me-1"></i> Save Photo
-                        </button>
-                    </form>
-
-                    @if (ViewBag.AvatarUrl != null)
-                    {
-                        <form asp-controller="Profile" asp-action="RemoveAvatar" method="post">
-                            <button type="submit" class="btn btn-outline-danger w-100 py-2 small">
-                                <i class="bi bi-trash-fill me-1"></i> Remove Photo
-                            </button>
-                        </form>
-                    }
-                </div>
+<div class="container py-5 text-light" style="max-width: 600px; min-height: 85vh;">
+    <div class="card p-4 shadow-lg rounded-3 avatar-form-card">
+        <div class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom border-secondary border-opacity-10">
+            <div>
+                <h1 class="fw-bold text-white fs-3 m-0" style="letter-spacing: -0.5px;">📷 Profile Picture</h1>
+                <p class="text-secondary small mb-0">Personalize your account with a custom avatar image.</p>
             </div>
+            <a asp-controller="Home" asp-action="Index" class="btn btn-sm px-3 py-2 rounded-2 fw-semibold avatar-btn-muted">
+                <i class="bi bi-arrow-left me-1"></i> Back Home
+            </a>
         </div>
+
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger py-2 px-3 rounded-2 small mb-4" style="background-color: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: #f87171;">
+                <i class="bi bi-exclamation-triangle-fill me-1"></i> @TempData["Error"]
+            </div>
+        }
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success py-2 px-3 rounded-2 small mb-4" style="background-color: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); color: #34d399;">
+                <i class="bi bi-check-circle-fill me-1"></i> @TempData["Success"]
+            </div>
+        }
+
+        <div class="text-center mb-4">
+            <div class="position-relative d-inline-block">
+                @if (ViewBag.AvatarUrl != null)
+                {
+                    <img src="@ViewBag.AvatarUrl" alt="Avatar" class="rounded-circle shadow-sm avatar-preview-img" />
+                }
+                else
+                {
+                    <div class="rounded-circle d-inline-flex align-items-center justify-content-center avatar-placeholder">
+                        <i class="bi bi-person-fill text-secondary" style="font-size: 3.5rem;"></i>
+                    </div>
+                }
+            </div>
+            <p class="text-secondary small mt-3 mb-0">Allowed formats: <strong class="text-light">.jpg, .jpeg, .png</strong> (Max 12 MB)</p>
+        </div>
+
+        <form asp-controller="Profile" asp-action="Avatar" method="post" enctype="multipart/form-data">
+            <div class="mb-3">
+                <label class="form-label fw-semibold text-light small mb-1">Choose Image File</label>
+                <input type="file" name="avatarFile" accept=".jpg,.jpeg,.png" class="form-control avatar-input" required />
+            </div>
+            <button type="submit" class="btn w-100 py-2 fw-semibold avatar-submit-btn mb-2">
+                <i class="bi bi-upload me-1"></i> Upload & Save Photo
+            </button>
+        </form>
+
+        @if (ViewBag.AvatarUrl != null)
+        {
+            <form asp-controller="Profile" asp-action="RemoveAvatar" method="post" class="mt-2">
+                <button type="submit" class="btn w-100 py-2 fw-semibold avatar-remove-btn">
+                    <i class="bi bi-trash-fill me-1"></i> Remove Current Photo
+                </button>
+            </form>
+        }
     </div>
 </div>
+
+<style>
+    .avatar-form-card {
+        background-color: #0d0f14 !important;
+        border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    }
+
+    .avatar-preview-img {
+        width: 120px;
+        height: 120px;
+        object-fit: cover;
+        border: 2px solid #ff6b00 !important;
+        box-shadow: 0 0 15px rgba(255, 107, 0, 0.2);
+    }
+
+    .avatar-placeholder {
+        width: 120px;
+        height: 120px;
+        background-color: #14171f !important;
+        border: 2px dashed rgba(255, 255, 255, 0.2);
+    }
+
+    .avatar-input {
+        background-color: #14171f !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        color: #ffffff !important;
+        font-size: 0.9rem;
+        transition: all 0.2s ease;
+    }
+
+        .avatar-input:focus {
+            background-color: #14171f !important;
+            border-color: #ff6b00 !important;
+            color: #ffffff !important;
+            box-shadow: 0 0 0 0.25rem rgba(255, 107, 0, 0.15);
+        }
+
+    .avatar-submit-btn {
+        background-color: #ff6b00 !important;
+        border: 1px solid #ff6b00 !important;
+        color: #ffffff !important;
+        font-size: 0.9rem;
+        transition: all 0.2s ease;
+    }
+
+        .avatar-submit-btn:hover {
+            background-color: #e56000 !important;
+            border-color: #e56000 !important;
+            box-shadow: 0 0 10px rgba(255, 107, 0, 0.4);
+        }
+
+    .avatar-remove-btn {
+        background-color: #14171f !important;
+        border: 1px solid rgba(239, 68, 68, 0.3) !important;
+        color: #f87171 !important;
+        font-size: 0.9rem;
+        transition: all 0.2s ease;
+    }
+
+        .avatar-remove-btn:hover {
+            background-color: rgba(239, 68, 68, 0.15) !important;
+            border-color: #ef4444 !important;
+            color: #ef4444 !important;
+        }
+
+    .avatar-btn-muted {
+        background-color: #14171f !important;
+        border: 1px solid rgba(255, 255, 255, 0.08) !important;
+        color: #9ca3af !important;
+        font-size: 0.9rem;
+        transition: all 0.2s ease;
+    }
+
+        .avatar-btn-muted:hover {
+            background-color: #1a1e28 !important;
+            color: #ffffff !important;
+            border-color: rgba(255, 255, 255, 0.2) !important;
+        }
+</style>

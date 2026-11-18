@@ -1,70 +1,132 @@
-<!-- CREATE.CSHTML -->
 @model WebApplication1.Models.Movie
 
 @{
     ViewData["Title"] = "Create Movie";
 }
 
-<div class="container my-5 text-light">
-    <div class="row justify-content-center">
-        <div class="col-md-7">
-            <div class="card border border-secondary border-opacity-25 rounded-3 p-4 shadow-lg" style="background-color: #12141a;">
-                <h2 class="fw-bold text-white mb-3">🎬 Add New Movie</h2>
-                <hr class="border-secondary opacity-25 mb-4" />
-
-                <form asp-action="Create">
-                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
-
-                    <div class="form-group mb-3">
-                        <label asp-for="Title" class="control-label fw-bold text-white mb-1"></label>
-                        <input asp-for="Title" class="form-control bg-dark text-white border-secondary" placeholder="e.g. Inception" />
-                        <span asp-validation-for="Title" class="text-danger"></span>
-                    </div>
-
-                    <div class="form-group mb-3">
-                        <label asp-for="Genre" class="control-label fw-bold text-white mb-1"></label>
-                        <input asp-for="Genre" class="form-control bg-dark text-white border-secondary" placeholder="e.g. Sci-Fi, Action" />
-                        <span asp-validation-for="Genre" class="text-danger"></span>
-                    </div>
-
-                    <div class="form-group mb-3">
-                        <label asp-for="HomeSection" class="control-label fw-bold text-white mb-1">Home Section / Row Category</label>
-                        <input asp-for="HomeSection" class="form-control bg-dark text-white border-secondary" placeholder="e.g. Blockbusters, Action Hits..." />
-                        <span asp-validation-for="HomeSection" class="text-danger"></span>
-                        <small class="text-secondary">Enter the category title for homepage rows.</small>
-                    </div>
-
-                    <div class="form-group mb-3">
-                        <label asp-for="Duration" class="control-label fw-bold text-white mb-1">Duration (minutes)</label>
-                        <input asp-for="Duration" class="form-control bg-dark text-white border-secondary" placeholder="120" />
-                        <span asp-validation-for="Duration" class="text-danger"></span>
-                    </div>
-
-                    <div class="form-group mb-3">
-                        <label asp-for="ImageUrl" class="control-label fw-bold text-white mb-1">Poster Image URL</label>
-                        <input asp-for="ImageUrl" class="form-control bg-dark text-white border-secondary" placeholder="https://..." />
-                        <span asp-validation-for="ImageUrl" class="text-danger"></span>
-                    </div>
-
-                    <div class="mb-3">
-                        <label asp-for="Description" class="control-label fw-bold text-white mb-1">Description</label>
-                        <textarea asp-for="Description" class="form-control bg-dark text-white border-secondary" rows="3" placeholder="Enter movie synopsis..."></textarea>
-                        <span asp-validation-for="Description" class="text-danger"></span>
-                    </div>
-
-                    <div class="form-check mb-4">
-                        <input class="form-check-input" asp-for="IsFeatured" />
-                        <label class="form-check-label fw-semibold text-white" asp-for="IsFeatured">
-                            ⭐ Display in Main Hero Carousel
-                        </label>
-                    </div>
-
-                    <div class="d-flex gap-2">
-                        <input type="submit" value="Create Movie" class="btn btn-success rounded-1 px-4 fw-bold" />
-                        <a asp-action="Admin" class="btn btn-outline-secondary rounded-1 px-4">Cancel</a>
-                    </div>
-                </form>
+<div class="container py-5 text-light" style="max-width: 800px; min-height: 85vh;">
+    <div class="card p-4 shadow-lg rounded-3 movie-form-card">
+        <div class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom border-secondary border-opacity-10">
+            <div>
+                <h1 class="fw-bold text-white fs-3 m-0" style="letter-spacing: -0.5px;">🎬 Add New Movie</h1>
+                <p class="text-secondary small mb-0">Fill in the details below to publish a new film to the catalog.</p>
             </div>
+            <a asp-action="Admin" class="btn btn-sm px-3 py-2 rounded-2 fw-semibold movie-btn-muted">
+                <i class="bi bi-arrow-left me-1"></i> Back to Dashboard
+            </a>
         </div>
+
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3 small"></div>
+
+            <div class="row">
+                <div class="col-md-8 mb-3">
+                    <label asp-for="Title" class="control-label fw-semibold text-light mb-1 small">Movie Title</label>
+                    <input asp-for="Title" class="form-control movie-input" placeholder="e.g. Inception" />
+                    <span asp-validation-for="Title" class="text-danger small"></span>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label asp-for="Duration" class="control-label fw-semibold text-light mb-1 small">Duration (minutes)</label>
+                    <input asp-for="Duration" class="form-control movie-input" placeholder="120" />
+                    <span asp-validation-for="Duration" class="text-danger small"></span>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label asp-for="Genre" class="control-label fw-semibold text-light mb-1 small">Genre</label>
+                    <input asp-for="Genre" class="form-control movie-input" placeholder="e.g. Sci-Fi, Action, Thriller" />
+                    <span asp-validation-for="Genre" class="text-danger small"></span>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label asp-for="HomeSection" class="control-label fw-semibold text-light mb-1 small">Home Section Category</label>
+                    <input asp-for="HomeSection" class="form-control movie-input" placeholder="e.g. Blockbusters, Trending..." />
+                    <span asp-validation-for="HomeSection" class="text-danger small"></span>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="ImageUrl" class="control-label fw-semibold text-light mb-1 small">Poster Image URL</label>
+                <input asp-for="ImageUrl" class="form-control movie-input" placeholder="https://example.com/poster.jpg" />
+                <span asp-validation-for="ImageUrl" class="text-danger small"></span>
+            </div>
+
+            <div class="mb-4">
+                <label asp-for="Description" class="control-label fw-semibold text-light mb-1 small">Description</label>
+                <textarea asp-for="Description" class="form-control movie-input" rows="4" placeholder="Enter movie description..."></textarea>
+                <span asp-validation-for="Description" class="text-danger small"></span>
+            </div>
+
+            <div class="form-check p-3 rounded-2 mb-4 movie-checkbox-box">
+                <input class="form-check-input mt-1" asp-for="IsFeatured" style="background-color: #14171f; border-color: rgba(255, 255, 255, 0.2);" />
+                <label class="form-check-label fw-semibold text-light ms-2" asp-for="IsFeatured" style="font-size: 0.9rem;">
+                    ⭐ Display in Main Hero Carousel on Homepage
+                </label>
+            </div>
+
+            <div class="d-flex gap-2 pt-2 border-top border-secondary border-opacity-10">
+                <button type="submit" class="btn px-4 py-2 rounded-2 fw-semibold movie-submit-btn">
+                    <i class="bi bi-check-lg me-1"></i> Create Movie
+                </button>
+                <a asp-action="Admin" class="btn px-4 py-2 rounded-2 fw-semibold movie-btn-muted">
+                    Cancel
+                </a>
+            </div>
+        </form>
     </div>
 </div>
+
+<style>
+    .movie-form-card {
+        background-color: #0d0f14 !important;
+        border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    }
+
+    .movie-input {
+        background-color: #14171f !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        color: #ffffff !important;
+        font-size: 0.9rem;
+        transition: all 0.2s ease;
+    }
+
+        .movie-input:focus {
+            background-color: #14171f !important;
+            border-color: #ff6b00 !important;
+            color: #ffffff !important;
+            box-shadow: 0 0 0 0.25rem rgba(255, 107, 0, 0.15);
+        }
+
+    .movie-checkbox-box {
+        background-color: #14171f !important;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .movie-submit-btn {
+        background-color: #ff6b00 !important;
+        border: 1px solid #ff6b00 !important;
+        color: #ffffff !important;
+        font-size: 0.9rem;
+        transition: all 0.2s ease;
+    }
+
+        .movie-submit-btn:hover {
+            background-color: #e56000 !important;
+            border-color: #e56000 !important;
+            box-shadow: 0 0 10px rgba(255, 107, 0, 0.4);
+        }
+
+    .movie-btn-muted {
+        background-color: #14171f !important;
+        border: 1px solid rgba(255, 255, 255, 0.08) !important;
+        color: #9ca3af !important;
+        font-size: 0.9rem;
+        transition: all 0.2s ease;
+    }
+
+        .movie-btn-muted:hover {
+            background-color: #1a1e28 !important;
+            color: #ffffff !important;
+            border-color: rgba(255, 255, 255, 0.2) !important;
+        }
+</style>

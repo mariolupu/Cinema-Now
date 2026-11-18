@@ -10,24 +10,24 @@
     var customSections = movieList.Where(m => !string.IsNullOrEmpty(m.HomeSection)).Select(m => m.HomeSection).Distinct().ToList();
 }
 
-<div class="container-fluid px-3 px-md-5 my-4 text-light main-cinema-bg smooth-render position-relative overflow-hidden">
+<div class="container-fluid px-2 px-sm-3 px-md-5 my-3 my-md-4 text-light main-cinema-bg smooth-render position-relative w-100">
 
-    <div class="cinema-spotlight spotlight-1"></div>
-    <div class="cinema-spotlight spotlight-2"></div>
-    <div class="cinema-spotlight spotlight-3"></div>
-    <div class="cinema-spotlight spotlight-4"></div>
-    <div class="cinema-spotlight spotlight-5"></div>
-    <div class="cinema-spotlight spotlight-6"></div>
-    <div class="cinema-spotlight spotlight-7"></div>
-    <div class="cinema-spotlight spotlight-8"></div>
+    <div class="cinema-spotlight spotlight-1" style="pointer-events: none;"></div>
+    <div class="cinema-spotlight spotlight-2" style="pointer-events: none;"></div>
+    <div class="cinema-spotlight spotlight-3" style="pointer-events: none;"></div>
+    <div class="cinema-spotlight spotlight-4" style="pointer-events: none;"></div>
+    <div class="cinema-spotlight spotlight-5" style="pointer-events: none;"></div>
+    <div class="cinema-spotlight spotlight-6" style="pointer-events: none;"></div>
+    <div class="cinema-spotlight spotlight-7" style="pointer-events: none;"></div>
+    <div class="cinema-spotlight spotlight-8" style="pointer-events: none;"></div>
 
     @if (totalSlides > 0)
     {
-        <div class="row justify-content-center pt-4 pt-md-5 mb-5 pb-4 position-relative" style="z-index: 2;">
-            <div class="col-11 col-lg-9 col-xl-8 col-xxl-7">
-                <div id="cinemaCarousel" class="carousel slide shadow-lg rounded-3 overflow-hidden position-relative hero-tall" data-bs-ride="carousel" data-bs-interval="6000">
+        <div class="row justify-content-center pt-2 pt-md-4 mb-4 position-relative mx-0" style="z-index: 2;">
+            <div class="col-12 col-lg-10 col-xl-9 col-xxl-8 px-1 px-sm-2">
+                <div id="cinemaCarousel" class="carousel slide shadow-lg rounded-3 overflow-hidden position-relative responsive-hero-carousel" data-bs-ride="carousel" data-bs-interval="6000">
 
-                    <div class="carousel-indicators">
+                    <div class="carousel-indicators mb-2">
                         @{
                             int slideIndex = 0;
                         }
@@ -43,26 +43,26 @@
                         }
                     </div>
 
-                    <div class="carousel-inner">
+                    <div class="carousel-inner h-100">
                         @{
                             bool isFirst = true;
                         }
 
                         @foreach (var promo in promotions)
                         {
-                            <div class="carousel-item carousel-slide-custom @(isFirst ? "active" : "")">
-                                <div class="carousel-img-wrapper">
-                                    <img src="@promo.ImageUrl" class="d-block w-100 carousel-img" alt="@promo.Title">
+                            <div class="carousel-item carousel-slide-custom h-100 @(isFirst ? "active" : "")">
+                                <div class="carousel-img-wrapper h-100">
+                                    <img src="@promo.ImageUrl" class="d-block w-100 h-100 carousel-img" alt="@promo.Title">
                                 </div>
-                                <div class="carousel-caption text-start p-4 p-lg-5 rounded-3 animate-caption">
-                                    <span class="badge badge-cinema-orange mb-2 fw-bold px-3 py-2 rounded-1 shadow-sm">@promo.BadgeText</span>
-                                    <h1 class="carousel-title text-white text-shadow mb-2">@promo.Title</h1>
+                                <div class="carousel-caption text-start p-3 p-sm-4 p-lg-5 rounded-0 bg-transparent animate-caption responsive-caption">
+                                    <span class="badge badge-cinema-orange mb-2 fw-bold px-2 px-md-3 py-1 py-md-2 rounded-1 shadow-sm responsive-badge">@promo.BadgeText</span>
+                                    <h1 class="carousel-title text-white text-shadow mb-1 mb-md-2 responsive-hero-title">@promo.Title</h1>
                                     @if (!string.IsNullOrEmpty(promo.Subtitle))
                                     {
-                                        <h4 class="carousel-subtitle text-cinema-orange fw-bold mb-3 text-shadow">@promo.Subtitle</h4>
+                                        <h4 class="carousel-subtitle text-cinema-orange fw-bold mb-2 mb-md-3 text-shadow responsive-hero-subtitle">@promo.Subtitle</h4>
                                     }
-                                    <p class="carousel-desc text-light mb-4 text-shadow">@promo.Description</p>
-                                    <a href="#movies-grid" class="btn btn-cinema-orange btn-md rounded-1 px-4 fw-bold shadow">
+                                    <p class="carousel-desc text-light mb-3 mb-md-4 text-shadow responsive-hero-desc">@promo.Description</p>
+                                    <a href="#movies-grid" class="btn btn-cinema-orange rounded-1 px-3 px-md-4 py-1.5 py-md-2 fw-bold shadow responsive-hero-btn">
                                         Explore Movies & Book
                                     </a>
                                 </div>
@@ -72,21 +72,21 @@
 
                         @foreach (var movie in featuredMovies)
                         {
-                            <div class="carousel-item carousel-slide-custom @(isFirst ? "active" : "")">
-                                <div class="carousel-img-wrapper">
-                                    <img src="@(string.IsNullOrEmpty(movie.ImageUrl) ? "https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?q=80&w=1400&auto=format&fit=crop" : movie.ImageUrl)" class="d-block w-100 carousel-img" alt="@movie.Title">
+                            <div class="carousel-item carousel-slide-custom h-100 @(isFirst ? "active" : "")">
+                                <div class="carousel-img-wrapper h-100">
+                                    <img src="@(string.IsNullOrEmpty(movie.ImageUrl) ? "https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?q=80&w=1400&auto=format&fit=crop" : movie.ImageUrl)" class="d-block w-100 h-100 carousel-img" alt="@movie.Title">
                                 </div>
-                                <div class="carousel-caption text-start p-4 p-lg-5 rounded-3 animate-caption">
-                                    <span class="badge badge-cinema-orange mb-2 fw-bold px-3 py-2 rounded-1 shadow-sm">⭐ FEATURED PREMIERE</span>
-                                    <h1 class="carousel-title text-white text-shadow mb-2">@movie.Title</h1>
-                                    <div class="carousel-subtitle text-cinema-orange fw-bold mb-3 text-shadow">
-                                        Genre: @movie.Genre &bull; Duration: @(movie.Duration / 60)h @(movie.Duration % 60)m
+                                <div class="carousel-caption text-start p-3 p-sm-4 p-lg-5 rounded-0 bg-transparent animate-caption responsive-caption">
+                                    <span class="badge badge-cinema-orange mb-2 fw-bold px-2 px-md-3 py-1 py-md-2 rounded-1 shadow-sm responsive-badge">FEATURED PREMIERE</span>
+                                    <h1 class="carousel-title text-white text-shadow mb-1 mb-md-2 responsive-hero-title">@movie.Title</h1>
+                                    <div class="carousel-subtitle text-cinema-orange fw-bold mb-2 mb-md-3 text-shadow responsive-hero-subtitle">
+                                        Genre: @movie.Genre • Duration: @(movie.Duration / 60)h @(movie.Duration % 60)m
                                     </div>
-                                    <p class="carousel-desc text-light mb-4 text-shadow">
+                                    <p class="carousel-desc text-light mb-3 mb-md-4 text-shadow responsive-hero-desc">
                                         Now playing in our cinemas. Explore showtimes, pick your favorite seats online, and enjoy the ultimate cinematic experience.
                                     </p>
-                                    <a asp-action="Details" asp-route-id="@movie.Id" class="btn btn-light btn-md rounded-1 px-4 fw-bold text-dark shadow">
-                                        🎟️ Reserve Seat Now
+                                    <a asp-action="Details" asp-route-id="@movie.Id" class="btn btn-light rounded-1 px-3 px-md-4 py-1.5 py-md-2 fw-bold text-dark shadow responsive-hero-btn">
+                                        Reserve Seat Now
                                     </a>
                                 </div>
                             </div>
@@ -94,14 +94,13 @@
                         }
                     </div>
 
-                    <!-- Săgeți carusel principal -->
-                    <button class="carousel-control-prev custom-arrow" type="button" data-bs-target="#cinemaCarousel" data-bs-slide="prev">
+                    <button class="carousel-control-prev custom-arrow" type="button" data-bs-target="#cinemaCarousel" data-bs-slide="prev" style="z-index: 15;">
                         <svg class="custom-arrow-icon" viewBox="0 0 16 32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                             <polyline points="12 4 4 16 12 28"></polyline>
                         </svg>
                         <span class="visually-hidden">Previous</span>
                     </button>
-                    <button class="carousel-control-next custom-arrow" type="button" data-bs-target="#cinemaCarousel" data-bs-slide="next">
+                    <button class="carousel-control-next custom-arrow" type="button" data-bs-target="#cinemaCarousel" data-bs-slide="next" style="z-index: 15;">
                         <svg class="custom-arrow-icon" viewBox="0 0 16 32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                             <polyline points="4 4 12 16 4 28"></polyline>
                         </svg>
@@ -112,7 +111,24 @@
         </div>
     }
 
-    <!-- RÂNDURI TEMATICE -->
+    <div class="row justify-content-center mb-4 mb-md-5 position-relative mx-0" style="z-index: 3;">
+        <div class="col-12 col-sm-10 col-md-8 col-lg-6 px-2 px-md-4">
+            <div class="text-center mb-2">
+                <span class="text-secondary small text-uppercase fw-semibold" style="letter-spacing: 1.5px; font-size: 0.7rem;">Find Your Next Movie</span>
+            </div>
+            <div class="p-1 p-sm-2 rounded-pill search-bar-container shadow-lg d-flex align-items-center gap-2 gap-sm-3 px-3 px-sm-4">
+                <i class="bi bi-search text-cinema-orange fs-6 fs-sm-5"></i>
+                <input type="text" id="movieSearchInput" class="form-control bg-transparent border-0 text-white shadow-none responsive-search-input" placeholder="Search by title, genre, or category..." autocomplete="off">
+                <button type="button" id="clearSearchBtn" class="btn btn-sm text-secondary border-0 rounded-circle d-none p-1" title="Clear search">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+            <div id="noResultsMsg" class="text-center text-secondary small mt-3 d-none">
+                <i class="bi bi-film me-1"></i> No movies found matching your search. Try another title, genre, or category.
+            </div>
+        </div>
+    </div>
+
     @if (customSections.Any())
     {
         int sectionCounter = 0;
@@ -123,44 +139,47 @@
             {
                 string sectionSliderId = "movieSlider_" + sectionCounter;
 
-                <div class="row justify-content-center mb-5 position-relative" style="z-index: 2;">
-                    <div class="col-12 col-xl-10 col-xxl-9">
-                        <div class="d-flex justify-content-between align-items-center mb-3 px-4">
-                            <h3 class="fw-bold text-white border-start border-4 border-cinema-orange ps-3 m-0 fs-4">
-                                🎬 @(section)
+                <div class="row justify-content-center mb-4 mb-md-5 position-relative searchable-section mx-0" style="z-index: 2;">
+                    <div class="col-12 col-xl-10 col-xxl-9 px-0 px-sm-2">
+                        <div class="d-flex justify-content-between align-items-center mb-2 mb-md-3 px-3 px-md-5">
+                            <h3 class="fw-bold text-white border-start border-4 border-cinema-orange ps-2 ps-md-3 m-0 responsive-section-title section-title-text">
+                                @(section)
                             </h3>
                         </div>
 
-                        <div class="movie-slider-wrapper position-relative px-5">
-                            <button class="slider-arrow slider-arrow-left" data-target="@sectionSliderId">
+                        <div class="movie-slider-wrapper position-relative px-4 px-md-5">
+                            <button type="button" class="slider-arrow slider-arrow-left" id="leftBtn_@sectionSliderId" data-target="@sectionSliderId" onclick="scrollSliderExact('@sectionSliderId', -1)">
                                 <svg class="slider-arrow-icon" viewBox="0 0 16 32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                                     <polyline points="12 4 4 16 12 28"></polyline>
                                 </svg>
                             </button>
 
-                            <div id="@sectionSliderId" class="movie-horizontal-slider d-flex gap-3 overflow-x-auto pt-2 pb-3">
+                            <div id="@sectionSliderId" class="movie-horizontal-slider d-flex gap-2 gap-md-3 overflow-x-auto pt-2 pb-3 no-scrollbar" onscroll="checkSliderPosition('@sectionSliderId')">
                                 @foreach (var item in sectionMovies)
                                 {
-                                    <div class="movie-slider-item flex-shrink-0" style="width: calc((100% - 80px) / 6); min-width: 155px;">
+                                    <div class="movie-slider-item flex-shrink-0 searchable-card responsive-movie-card"
+                                         data-title="@item.Title.ToLower()"
+                                         data-genre="@item.Genre.ToLower()"
+                                         data-section="@(!string.IsNullOrEmpty(item.HomeSection) ? item.HomeSection.ToLower() : "")">
                                         <div class="card h-100 shadow-sm border border-secondary border-opacity-25 rounded-3 movie-card text-light">
-                                            <div class="poster-container overflow-hidden position-relative rounded-top-3" style="height: 190px;">
+                                            <div class="poster-container overflow-hidden position-relative rounded-top-3 responsive-poster">
                                                 <img src="@(string.IsNullOrEmpty(item.ImageUrl) ? "https://picsum.photos/300/200" : item.ImageUrl)"
                                                      class="card-img-top movie-img w-100 h-100" alt="@item.Title" style="object-fit: cover;">
                                             </div>
-                                            <div class="card-body d-flex flex-column p-2 p-sm-3">
-                                                <h6 class="card-title fw-bold text-white mb-1 text-truncate" title="@item.Title" style="font-size: 0.85rem;">@item.Title</h6>
-                                                <div class="mb-2 d-flex align-items-center justify-content-between gap-1 flex-wrap">
-                                                    <span class="badge bg-secondary" style="font-size: 0.65rem;" title="@item.Genre">@item.Genre</span>
+                                            <div class="card-body d-flex flex-column p-1 p-sm-2 p-md-3">
+                                                <h6 class="card-title fw-bold text-white mb-1 text-truncate responsive-card-title" title="@item.Title">@item.Title</h6>
+                                                <div class="mb-1 mb-md-2 d-flex align-items-center justify-content-between gap-1 flex-wrap">
+                                                    <span class="badge bg-secondary text-truncate responsive-card-badge" title="@item.Genre">@item.Genre</span>
                                                     @{
                                                         int hours = item.Duration / 60;
                                                         int minutes = item.Duration % 60;
                                                         string formattedDuration = hours > 0 ? $"{hours}h {minutes}m" : $"{minutes}m";
                                                     }
-                                                    <span class="text-secondary small text-nowrap" style="font-size: 0.7rem;"><i class="bi bi-clock me-1"></i>@formattedDuration</span>
+                                                    <span class="text-secondary text-nowrap responsive-card-time"><i class="bi bi-clock me-1"></i>@formattedDuration</span>
                                                 </div>
-                                                <div class="mt-auto pt-2 border-top border-secondary border-opacity-25">
-                                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-cinema-orange w-100 rounded-1 fw-bold shadow-sm text-white py-1 btn-sm text-nowrap" style="font-size: 0.75rem;">
-                                                        🎟️ Book Seat
+                                                <div class="mt-auto pt-1 pt-md-2 border-top border-secondary border-opacity-25">
+                                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-cinema-orange w-100 rounded-1 fw-bold shadow-sm text-white py-1 btn-sm text-nowrap responsive-card-btn">
+                                                        Book Seat
                                                     </a>
                                                 </div>
                                             </div>
@@ -169,7 +188,7 @@
                                 }
                             </div>
 
-                            <button class="slider-arrow slider-arrow-right" data-target="@sectionSliderId">
+                            <button type="button" class="slider-arrow slider-arrow-right" id="rightBtn_@sectionSliderId" data-target="@sectionSliderId" onclick="scrollSliderExact('@sectionSliderId', 1)">
                                 <svg class="slider-arrow-icon" viewBox="0 0 16 32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                                     <polyline points="4 4 12 16 4 28"></polyline>
                                 </svg>
@@ -180,28 +199,28 @@
 
                 if (sectionCounter == 0)
                 {
-                    <div class="row justify-content-center my-5 position-relative" style="z-index: 2;">
-                        <div class="col-12 col-xl-10 col-xxl-9">
-                            <div class="row g-4 py-3 px-1 px-md-3">
-                                <div class="col-md-4">
-                                    <div class="card marketing-box h-100 p-4 rounded-3 text-light shadow-sm">
-                                        <div class="mb-3 text-cinema-orange fs-2">⚡</div>
-                                        <h5 class="fw-bold text-white mb-2">Fast Booking 24/7</h5>
-                                        <p class="text-secondary small mb-0">Choose your favorite movie, pick the best seats in the cinema hall directly from your phone or PC without queuing.</p>
+                    <div class="row justify-content-center my-4 my-md-5 position-relative mx-0" style="z-index: 2;" id="marketingBoxesRow">
+                        <div class="col-12 col-xl-10 col-xxl-9 px-1 px-md-3">
+                            <div class="row g-2 g-sm-3 g-md-4 py-2 py-md-3">
+                                <div class="col-4">
+                                    <div class="card marketing-box h-100 p-2 p-sm-3 p-md-4 rounded-3 text-light shadow-sm d-flex flex-column justify-content-start">
+                                        <div class="mb-1 mb-md-3 text-cinema-orange responsive-mkt-icon"><i class="bi bi-lightning-charge-fill"></i></div>
+                                        <h5 class="fw-bold text-white mb-1 mb-md-2 responsive-mkt-title">Fast Booking 24/7</h5>
+                                        <p class="text-secondary mb-0 responsive-mkt-desc">Choose your favorite movie, pick the best seats in the cinema hall directly from your phone or PC without queuing.</p>
                                     </div>
                                 </div>
-                                <div class="col-md-4">
-                                    <div class="card marketing-box h-100 p-4 rounded-3 text-light shadow-sm">
-                                        <div class="mb-3 text-cinema-orange fs-2">🍿</div>
-                                        <h5 class="fw-bold text-white mb-2">Bar & Snacks Menus</h5>
-                                        <p class="text-secondary small mb-0">Enjoy the complete experience with fresh popcorn, crunchy nachos with cheese sauce, and refreshing drinks at special prices.</p>
+                                <div class="col-4">
+                                    <div class="card marketing-box h-100 p-2 p-sm-3 p-md-4 rounded-3 text-light shadow-sm d-flex flex-column justify-content-start">
+                                        <div class="mb-1 mb-md-3 text-cinema-orange responsive-mkt-icon"><i class="bi bi-cup-straw"></i></div>
+                                        <h5 class="fw-bold text-white mb-1 mb-md-2 responsive-mkt-title">Bar & Snacks Menus</h5>
+                                        <p class="text-secondary mb-0 responsive-mkt-desc">Enjoy the complete experience with fresh popcorn, crunchy nachos with cheese sauce, and refreshing drinks at special prices.</p>
                                     </div>
                                 </div>
-                                <div class="col-md-4">
-                                    <div class="card marketing-box h-100 p-4 rounded-3 text-light shadow-sm">
-                                        <div class="mb-3 text-cinema-orange fs-2">👑</div>
-                                        <h5 class="fw-bold text-white mb-2">VIP Experience & Premium Halls</h5>
-                                        <p class="text-secondary small mb-0">Discover comfortable reclining armchairs, state-of-the-art Dolby Atmos surround sound, and flawless visual quality.</p>
+                                <div class="col-4">
+                                    <div class="card marketing-box h-100 p-2 p-sm-3 p-md-4 rounded-3 text-light shadow-sm d-flex flex-column justify-content-start">
+                                        <div class="mb-1 mb-md-3 text-cinema-orange responsive-mkt-icon"><i class="bi bi-award-fill"></i></div>
+                                        <h5 class="fw-bold text-white mb-1 mb-md-2 responsive-mkt-title">VIP Experience & Halls</h5>
+                                        <p class="text-secondary mb-0 responsive-mkt-desc">Discover comfortable reclining armchairs, state-of-the-art Dolby Atmos surround sound, and flawless visual quality.</p>
                                     </div>
                                 </div>
                             </div>
@@ -214,46 +233,48 @@
         }
     }
 
-    <!-- ALL BLOCKBUSTERS & MOVIES -->
-    <div class="row justify-content-center position-relative" style="z-index: 2;">
-        <div class="col-12 col-xl-10 col-xxl-9">
-            <div id="movies-grid" class="row mb-4 align-items-center mt-4 px-4">
-                <div class="col-md-12">
-                    <h2 class="fw-bold text-white fs-3">🎬 All Blockbusters & Movies</h2>
+    <div class="row justify-content-center position-relative searchable-section mx-0" style="z-index: 2;">
+        <div class="col-12 col-xl-10 col-xxl-9 px-0 px-sm-2">
+            <div id="movies-grid" class="row mb-3 mb-md-4 align-items-center mt-3 mt-md-4 px-3 px-md-5 mx-0">
+                <div class="col-12 px-0">
+                    <h2 class="fw-bold text-white responsive-section-title">All Blockbusters & Movies</h2>
                     <p class="text-secondary small mb-0">Check out the complete movie catalog currently running in our cinemas.</p>
                 </div>
             </div>
 
-            <div class="movie-slider-wrapper position-relative px-5 mb-5">
-                <button class="slider-arrow slider-arrow-left" data-target="allMoviesSlider">
+            <div class="movie-slider-wrapper position-relative px-4 px-md-5 mb-5">
+                <button type="button" class="slider-arrow slider-arrow-left" id="leftBtn_allMoviesSlider" data-target="allMoviesSlider" onclick="scrollSliderExact('allMoviesSlider', -1)">
                     <svg class="slider-arrow-icon" viewBox="0 0 16 32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                         <polyline points="12 4 4 16 12 28"></polyline>
                     </svg>
                 </button>
 
-                <div id="allMoviesSlider" class="movie-horizontal-slider d-flex gap-3 overflow-x-auto pt-2 pb-3">
+                <div id="allMoviesSlider" class="movie-horizontal-slider d-flex gap-2 gap-md-3 overflow-x-auto pt-2 pb-3 no-scrollbar" onscroll="checkSliderPosition('allMoviesSlider')">
                     @foreach (var item in movieList)
                     {
-                        <div class="movie-slider-item flex-shrink-0" style="width: calc((100% - 80px) / 6); min-width: 155px;">
+                        <div class="movie-slider-item flex-shrink-0 searchable-card responsive-movie-card"
+                             data-title="@item.Title.ToLower()"
+                             data-genre="@item.Genre.ToLower()"
+                             data-section="@(!string.IsNullOrEmpty(item.HomeSection) ? item.HomeSection.ToLower() : "")">
                             <div class="card h-100 shadow-sm border border-secondary border-opacity-25 rounded-3 movie-card text-light">
-                                <div class="poster-container overflow-hidden position-relative rounded-top-3" style="height: 190px;">
+                                <div class="poster-container overflow-hidden position-relative rounded-top-3 responsive-poster">
                                     <img src="@(string.IsNullOrEmpty(item.ImageUrl) ? "https://picsum.photos/300/200" : item.ImageUrl)"
                                          class="card-img-top movie-img w-100 h-100" alt="@item.Title" style="object-fit: cover;">
                                 </div>
-                                <div class="card-body d-flex flex-column p-2 p-sm-3">
-                                    <h6 class="card-title fw-bold text-white mb-1 text-truncate" title="@item.Title" style="font-size: 0.85rem;">@item.Title</h6>
-                                    <div class="mb-2 d-flex align-items-center justify-content-between gap-1 flex-wrap">
-                                        <span class="badge bg-secondary" style="font-size: 0.65rem;" title="@item.Genre">@item.Genre</span>
+                                <div class="card-body d-flex flex-column p-1 p-sm-2 p-md-3">
+                                    <h6 class="card-title fw-bold text-white mb-1 text-truncate responsive-card-title" title="@item.Title">@item.Title</h6>
+                                    <div class="mb-1 mb-md-2 d-flex align-items-center justify-content-between gap-1 flex-wrap">
+                                        <span class="badge bg-secondary text-truncate responsive-card-badge" title="@item.Genre">@item.Genre</span>
                                         @{
                                             int hours = item.Duration / 60;
                                             int minutes = item.Duration % 60;
                                             string formattedDuration = hours > 0 ? $"{hours}h {minutes}m" : $"{minutes}m";
                                         }
-                                        <span class="text-secondary small text-nowrap" style="font-size: 0.7rem;"><i class="bi bi-clock me-1"></i>@formattedDuration</span>
+                                        <span class="text-secondary text-nowrap responsive-card-time"><i class="bi bi-clock me-1"></i>@formattedDuration</span>
                                     </div>
-                                    <div class="mt-auto pt-2 border-top border-secondary border-opacity-25">
-                                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-cinema-orange w-100 rounded-1 fw-bold shadow-sm text-white py-1 btn-sm text-nowrap" style="font-size: 0.75rem;">
-                                            🎟️ Book Seat
+                                    <div class="mt-auto pt-1 pt-md-2 border-top border-secondary border-opacity-25">
+                                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-cinema-orange w-100 rounded-1 fw-bold shadow-sm text-white py-1 btn-sm text-nowrap responsive-card-btn">
+                                            Book Seat
                                         </a>
                                     </div>
                                 </div>
@@ -262,7 +283,7 @@
                     }
                 </div>
 
-                <button class="slider-arrow slider-arrow-right" data-target="allMoviesSlider">
+                <button type="button" class="slider-arrow slider-arrow-right" id="rightBtn_allMoviesSlider" data-target="allMoviesSlider" onclick="scrollSliderExact('allMoviesSlider', 1)">
                     <svg class="slider-arrow-icon" viewBox="0 0 16 32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                         <polyline points="4 4 12 16 4 28"></polyline>
                     </svg>
@@ -272,71 +293,412 @@
     </div>
 </div>
 
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        function updateArrowVisibility(slider) {
-            const wrapper = slider.closest(".movie-slider-wrapper");
-            if (!wrapper) return;
+<style>
+    /* Ensure a single clean scrollbar for the entire page */
+    html {
+        overflow-x: hidden;
+        overflow-y: scroll;
+    }
 
-            const leftArrow = wrapper.querySelector(".slider-arrow-left");
-            const rightArrow = wrapper.querySelector(".slider-arrow-right");
+    body {
+        overflow-x: hidden;
+    }
 
-            const scrollLeft = slider.scrollLeft;
-            const maxScroll = slider.scrollWidth - slider.clientWidth;
+    /* Hide horizontal scrollbar on horizontal movie sliders while keeping touch/wheel scroll */
+    .no-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
 
-            if (leftArrow) {
-                if (scrollLeft <= 2) {
-                    leftArrow.classList.add("is-hidden");
-                } else {
-                    leftArrow.classList.remove("is-hidden");
-                }
-            }
+    .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
 
-            if (rightArrow) {
-                if (scrollLeft >= maxScroll - 2 || maxScroll <= 0) {
-                    rightArrow.classList.add("is-hidden");
-                } else {
-                    rightArrow.classList.remove("is-hidden");
-                }
-            }
+    /* Search bar */
+    .search-bar-container {
+        background: rgba(20, 23, 31, 0.85) !important;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 107, 0, 0.35) !important;
+        transition: all 0.3s ease;
+    }
+
+        .search-bar-container:focus-within {
+            border-color: #ff6b00 !important;
+            box-shadow: 0 0 20px rgba(255, 107, 0, 0.25) !important;
+            background: rgba(20, 23, 31, 0.95) !important;
         }
 
+    .responsive-search-input {
+        font-size: 0.95rem;
+    }
+
+    /* Hero Carousel PC Default */
+    .responsive-hero-carousel {
+        height: 480px !important;
+    }
+
+        .responsive-hero-carousel .carousel-inner,
+        .responsive-hero-carousel .carousel-item {
+            height: 100% !important;
+        }
+
+    .carousel-img-wrapper {
+        width: 100%;
+        height: 100%;
+    }
+
+    .carousel-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover !important;
+    }
+
+    .responsive-caption {
+        bottom: 15% !important;
+        max-width: 650px;
+    }
+
+    /* Slider Arrows */
+    .slider-arrow {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 30 !important;
+        background: rgba(20, 23, 31, 0.75);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 4px;
+        color: rgba(255, 255, 255, 0.9);
+        cursor: pointer;
+        padding: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+    }
+
+        .slider-arrow:hover {
+            background: #ff6b00;
+            border-color: #ff6b00;
+            color: #ffffff;
+        }
+
+        .slider-arrow.is-hidden {
+            opacity: 0 !important;
+            pointer-events: none !important;
+            visibility: hidden !important;
+        }
+
+    .slider-arrow-left {
+        left: 4px;
+    }
+
+    .slider-arrow-right {
+        right: 4px;
+    }
+
+    .slider-arrow-icon {
+        width: 16px;
+        height: 32px;
+    }
+
+    /* Desktop default movie card & poster (6 cards per row) */
+    .responsive-movie-card {
+        width: calc((100% - 80px) / 6);
+        min-width: 155px;
+    }
+
+    .responsive-poster {
+        height: 190px;
+    }
+
+    .responsive-card-title {
+        font-size: 0.85rem;
+    }
+
+    .responsive-card-badge {
+        font-size: 0.65rem;
+        max-width: 65%;
+    }
+
+    .responsive-card-time {
+        font-size: 0.7rem;
+    }
+
+    .responsive-card-btn {
+        font-size: 0.75rem;
+    }
+
+    .responsive-section-title {
+        font-size: 1.5rem;
+    }
+
+    /* Desktop default marketing boxes */
+    .responsive-mkt-icon {
+        font-size: 2rem;
+    }
+
+    .responsive-mkt-title {
+        font-size: 1.15rem;
+    }
+
+    .responsive-mkt-desc {
+        font-size: 0.875rem;
+        line-height: 1.45;
+    }
+
+    /* Mobile Portrait & Small Screens Adjustments */
+    @@media (max-width: 767.98px) {
+        .responsive-hero-carousel {
+            height: 340px !important;
+        }
+
+        .responsive-caption {
+            position: absolute !important;
+            bottom: 12% !important;
+            left: 5% !important;
+            right: 5% !important;
+            margin: 0 !important;
+            padding: 0.5rem !important;
+            background: transparent !important;
+            backdrop-filter: none !important;
+            border-radius: 0 !important;
+            z-index: 5;
+        }
+
+        .responsive-badge {
+            font-size: 0.6rem !important;
+            padding: 2px 6px !important;
+        }
+
+        .responsive-hero-title {
+            font-size: 1.15rem !important;
+            line-height: 1.2 !important;
+        }
+
+        .responsive-hero-subtitle {
+            font-size: 0.75rem !important;
+        }
+
+        .responsive-hero-desc {
+            font-size: 0.7rem !important;
+            line-height: 1.3 !important;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .responsive-hero-btn {
+            font-size: 0.72rem !important;
+            padding: 4px 12px !important;
+            display: inline-block;
+        }
+
+        .responsive-search-input {
+            font-size: 0.85rem !important;
+        }
+
+        .responsive-section-title {
+            font-size: 1.1rem !important;
+        }
+        /* 4 Movie Cards per row on Mobile Portrait */
+        .slider-arrow-icon {
+            width: 14px !important;
+            height: 28px !important;
+        }
+
+        .responsive-movie-card {
+            width: calc((100% - 24px) / 4) !important;
+            min-width: 72px !important;
+        }
+
+        .responsive-poster {
+            height: 105px !important;
+        }
+
+        .responsive-card-title {
+            font-size: 0.68rem !important;
+            margin-bottom: 2px !important;
+        }
+
+        .responsive-card-badge {
+            font-size: 0.5rem !important;
+            padding: 2px 4px !important;
+            max-width: 100% !important;
+        }
+
+        .responsive-card-time {
+            font-size: 0.55rem !important;
+        }
+
+        .responsive-card-btn {
+            font-size: 0.6rem !important;
+            padding: 2px 4px !important;
+        }
+        /* 3 Marketing Boxes */
+        .responsive-mkt-icon {
+            font-size: 1.15rem !important;
+        }
+
+        .responsive-mkt-title {
+            font-size: 0.72rem !important;
+            line-height: 1.2 !important;
+        }
+
+        .responsive-mkt-desc {
+            font-size: 0.6rem !important;
+            line-height: 1.25 !important;
+        }
+    }
+
+    @@media (max-width: 400px) {
+        .responsive-poster {
+            height: 92px !important;
+        }
+
+        .responsive-card-title {
+            font-size: 0.62rem !important;
+        }
+
+        .responsive-card-btn {
+            font-size: 0.55rem !important;
+        }
+
+        .responsive-mkt-title {
+            font-size: 0.66rem !important;
+        }
+
+        .responsive-mkt-desc {
+            font-size: 0.56rem !important;
+        }
+    }
+</style>
+
+<script>
+    function scrollSliderExact(targetId, direction) {
+        const slider = document.getElementById(targetId);
+        if (!slider) return;
+
+        const cardItem = slider.querySelector(".movie-slider-item:not([style*='display: none'])");
+        if (!cardItem) return;
+
+        const computedGap = window.innerWidth >= 768 ? 16 : 8;
+        const cardWidth = cardItem.offsetWidth + computedGap;
+
+        slider.scrollBy({ left: direction * cardWidth, behavior: 'smooth' });
+        setTimeout(() => checkSliderPosition(targetId), 300);
+    }
+
+    function checkSliderPosition(sliderId) {
+        const slider = document.getElementById(sliderId);
+        if (!slider) return;
+
+        const leftBtn = document.getElementById("leftBtn_" + sliderId);
+        const rightBtn = document.getElementById("rightBtn_" + sliderId);
+
+        const scrollLeft = slider.scrollLeft;
+        const maxScroll = slider.scrollWidth - slider.clientWidth;
+
+        if (maxScroll <= 4) {
+            if (leftBtn) leftBtn.classList.add("is-hidden");
+            if (rightBtn) rightBtn.classList.add("is-hidden");
+            return;
+        }
+
+        if (scrollLeft <= 2) {
+            if (leftBtn) leftBtn.classList.add("is-hidden");
+        } else {
+            if (leftBtn) leftBtn.classList.remove("is-hidden");
+        }
+
+        if (scrollLeft >= maxScroll - 2) {
+            if (rightBtn) rightBtn.classList.add("is-hidden");
+        } else {
+            if (rightBtn) rightBtn.classList.remove("is-hidden");
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
         document.querySelectorAll(".movie-horizontal-slider").forEach(slider => {
-            updateArrowVisibility(slider);
-
-            slider.addEventListener("scroll", function () {
-                updateArrowVisibility(this);
-            });
-        });
-
-        document.querySelectorAll(".slider-arrow-left").forEach(button => {
-            button.addEventListener("click", function () {
-                const targetId = this.getAttribute("data-target");
-                const slider = document.getElementById(targetId);
-                if (slider) {
-                    const cardItem = slider.querySelector(".movie-slider-item");
-                    const scrollAmount = cardItem ? cardItem.offsetWidth + 16 : 200;
-                    slider.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
-                }
-            });
-        });
-
-        document.querySelectorAll(".slider-arrow-right").forEach(button => {
-            button.addEventListener("click", function () {
-                const targetId = this.getAttribute("data-target");
-                const slider = document.getElementById(targetId);
-                if (slider) {
-                    const cardItem = slider.querySelector(".movie-slider-item");
-                    const scrollAmount = cardItem ? cardItem.offsetWidth + 16 : 200;
-                    slider.scrollBy({ left: scrollAmount, behavior: 'smooth' });
-                }
-            });
+            checkSliderPosition(slider.id);
         });
 
         window.addEventListener("resize", function () {
             document.querySelectorAll(".movie-horizontal-slider").forEach(slider => {
-                updateArrowVisibility(slider);
+                checkSliderPosition(slider.id);
             });
         });
+
+        const searchInput = document.getElementById("movieSearchInput");
+        const clearBtn = document.getElementById("clearSearchBtn");
+        const noResultsMsg = document.getElementById("noResultsMsg");
+        const marketingBoxes = document.getElementById("marketingBoxesRow");
+        const searchableCards = document.querySelectorAll(".searchable-card");
+        const sections = document.querySelectorAll(".searchable-section");
+
+        if (searchInput) {
+            searchInput.addEventListener("input", function () {
+                const query = this.value.trim().toLowerCase();
+
+                if (query.length > 0) {
+                    clearBtn.classList.remove("d-none");
+                    if (marketingBoxes) marketingBoxes.style.display = "none";
+                } else {
+                    clearBtn.classList.add("d-none");
+                    if (marketingBoxes) marketingBoxes.style.display = "flex";
+                }
+
+                let totalVisibleCards = 0;
+
+                searchableCards.forEach(card => {
+                    const title = card.getAttribute("data-title") || "";
+                    const genre = card.getAttribute("data-genre") || "";
+                    const sectionName = card.getAttribute("data-section") || "";
+
+                    if (title.includes(query) || genre.includes(query) || sectionName.includes(query)) {
+                        card.style.display = "";
+                        totalVisibleCards++;
+                    } else {
+                        card.style.display = "none";
+                    }
+                });
+
+                sections.forEach(section => {
+                    const visibleCardsInSection = section.querySelectorAll('.searchable-card:not([style*="display: none"])');
+                    if (visibleCardsInSection.length === 0) {
+                        section.style.display = "none";
+                    } else {
+                        section.style.display = "";
+                        const slider = section.querySelector(".movie-horizontal-slider");
+                        if (slider) checkSliderPosition(slider.id);
+                    }
+                });
+
+                if (totalVisibleCards === 0 && query.length > 0) {
+                    noResultsMsg.classList.remove("d-none");
+                } else {
+                    noResultsMsg.classList.add("d-none");
+                }
+            });
+
+            clearBtn.addEventListener("click", function () {
+                searchInput.value = "";
+                clearBtn.classList.add("d-none");
+                if (marketingBoxes) marketingBoxes.style.display = "flex";
+                noResultsMsg.classList.add("d-none");
+
+                searchableCards.forEach(card => {
+                    card.style.display = "";
+                });
+
+                sections.forEach(section => {
+                    section.style.display = "";
+                    const slider = section.querySelector(".movie-horizontal-slider");
+                    if (slider) checkSliderPosition(slider.id);
+                });
+
+                searchInput.focus();
+            });
+        }
     });
 </script>

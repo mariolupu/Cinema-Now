@@ -4,42 +4,50 @@
     ViewData["Title"] = Model.Title + " - Details";
 }
 
-<div class="container my-5 text-light">
-    <div class="row g-5 align-items-center movie-detail-container">
-        <!-- Posterul filmului -->
-        <div class="col-md-4 text-center">
-            <div class="poster-wrapper shadow-lg rounded-4 overflow-hidden border border-secondary border-opacity-25">
+<div class="container py-5 text-light" style="background-color: #050505; min-height: 85vh;">
+    <div class="row g-5 align-items-center">
+        <div class="col-lg-4 text-center">
+            <div class="poster-wrapper shadow-lg rounded-4 overflow-hidden position-relative" style="background-color: #0d0f14; border: 1px solid rgba(255, 255, 255, 0.08);">
                 <img src="@(string.IsNullOrEmpty(Model.ImageUrl) ? "https://picsum.photos/400/600" : Model.ImageUrl)"
                      class="img-fluid w-100 movie-poster-img" alt="@Model.Title" />
             </div>
         </div>
 
-        <!-- Informații și Synopsis -->
-        <div class="col-md-8">
-            <span class="badge badge-cinema-orange px-3 py-2 rounded-pill mb-3 text-uppercase fw-semibold tracking-wide">@Model.Genre</span>
-            <h1 class="display-4 fw-bold text-white mb-3">@Model.Title</h1>
+        <div class="col-lg-8">
+            <div class="mb-3">
+                <span class="badge px-3 py-2 rounded-2 text-uppercase fw-bold" style="background-color: #ff6b00; color: #ffffff; letter-spacing: 1px; font-size: 0.75rem;">
+                    @Model.Genre
+                </span>
+            </div>
 
-            <div class="d-flex align-items-center text-secondary mb-4 fs-5">
+            <h1 class="display-5 fw-bold text-white mb-3" style="font-family: 'Segoe UI', sans-serif; letter-spacing: -0.5px;">
+                @Model.Title
+            </h1>
+
+            <div class="d-flex align-items-center text-secondary mb-4 fs-6 gap-4">
                 @{
                     int hours = Model.Duration / 60;
                     int minutes = Model.Duration % 60;
                     string formattedDuration = hours > 0 ? $"{hours}h {minutes}min" : $"{minutes}min";
                 }
-                <span class="me-4 text-light"><i class="bi bi-clock me-2 text-cinema-orange"></i><strong>@formattedDuration</strong></span>
+                <div class="d-flex align-items-center text-light">
+                    <i class="bi bi-clock me-2" style="color: #ff6b00;"></i>
+                    <span>@formattedDuration</span>
+                </div>
             </div>
 
-            <!-- Synopsis Card în temă Dark -->
-            <div class="card border-0 cinema-card-inner p-4 rounded-4 mb-4 shadow-sm">
-                <h5 class="fw-bold text-white mb-2">📖 Synopsis</h5>
-                <p class="text-secondary mb-0 lh-lg">
+            <div class="p-4 rounded-3 mb-4" style="background-color: #0d0f14; border: 1px solid rgba(255, 255, 255, 0.08);">
+                <h5 class="fw-bold text-white mb-2 fs-6 text-uppercase" style="letter-spacing: 0.5px; color: #9ca3af !important;">Description</h5>
+                <p class="text-secondary mb-0 lh-base" style="font-size: 0.95rem; color: #d1d5db !important;">
                     @(string.IsNullOrEmpty(Model.Description) ? "No description available for this movie yet." : Model.Description)
                 </p>
             </div>
 
-            <!-- Proiecții (Ore disponibile) pentru rezervare -->
-            <div class="card border-0 cinema-card-inner p-4 rounded-4 mb-4 shadow-sm">
-                <h5 class="fw-bold text-white mb-3">🕒 Select Showtime & Book Seats</h5>
-                <div class="d-flex gap-3 flex-wrap">
+            <div class="p-4 rounded-3 mb-4" style="background-color: #0d0f14; border: 1px solid rgba(255, 255, 255, 0.08);">
+                <h5 class="fw-bold text-white mb-3 fs-6 text-uppercase" style="letter-spacing: 0.5px; color: #9ca3af !important;">
+                    <i class="bi bi-ticket-perforated me-2" style="color: #ff6b00;"></i> Select Showtime & Book Seats
+                </h5>
+                <div class="d-flex flex-column gap-2">
                     @if (ViewBag.Screenings != null)
                     {
                         var screenings = ViewBag.Screenings as List<WebApplication1.Models.Screening>;
@@ -48,22 +56,30 @@
                             foreach (var screening in screenings)
                             {
                                 <a asp-controller="Bookings" asp-action="Book" asp-route-id="@screening.Id"
-                                   class="btn btn-outline-cinema px-4 py-2 rounded-pill fw-semibold shadow-sm pulse-btn">
-                                    🎟️ @screening.HallName — @screening.Showtime.ToString("dd MMM, HH:mm")
+                                   class="btn d-flex align-items-center justify-content-between px-4 py-3 rounded-2 fw-semibold showtime-row">
+                                    <div class="d-flex align-items-center gap-3">
+                                        <i class="bi bi-film text-cinema-orange fs-5"></i>
+                                        <span class="text-white">@screening.HallName</span>
+                                    </div>
+                                    <div class="d-flex align-items-center gap-2 text-secondary small">
+                                        <i class="bi bi-calendar-event"></i>
+                                        <span class="text-light fw-medium">@screening.Showtime.ToString("dd MMM yyyy, HH:mm")</span>
+                                        <i class="bi bi-chevron-right ms-2 text-cinema-orange"></i>
+                                    </div>
                                 </a>
                             }
                         }
                         else
                         {
-                            <p class="text-secondary fst-italic mb-0">No showtimes available for this movie at the moment.</p>
+                            <p class="text-secondary fst-italic mb-0 small">No showtimes available for this movie at the moment.</p>
                         }
                     }
                 </div>
             </div>
 
             <div>
-                <a asp-action="Index" class="btn btn-outline-light btn-lg px-4 rounded-pill">
-                    ← Back to Catalog
+                <a asp-action="Index" class="btn btn-sm px-4 py-2 rounded-2 fw-semibold back-catalog-btn">
+                    <i class="bi bi-arrow-left me-1"></i> Back to Catalog
                 </a>
             </div>
         </div>
@@ -75,44 +91,42 @@
         color: #ff6b00 !important;
     }
 
-    .badge-cinema-orange {
-        background-color: #ff6b00;
-        color: #fff;
-    }
-
-    .cinema-card-inner {
-        background-color: #161920 !important;
-        border: 1px solid rgba(255, 255, 255, 0.08) !important;
-    }
-
-    .btn-outline-cinema {
-        color: #ff6b00;
-        border-color: #ff6b00;
-        background-color: transparent;
-        transition: all 0.3s ease;
-    }
-
-        .btn-outline-cinema:hover {
-            background-color: #ff6b00 !important;
-            color: white !important;
-            border-color: #ff6b00;
-        }
-
     .movie-poster-img {
-        transition: transform 0.5s ease;
-        max-height: 500px;
+        transition: transform 0.4s ease;
+        max-height: 480px;
         object-fit: cover;
     }
 
     .poster-wrapper:hover .movie-poster-img {
-        transform: scale(1.03);
+        transform: scale(1.02);
     }
 
-    .pulse-btn {
-        transition: all 0.3s ease;
+    .showtime-row {
+        background-color: #14171f !important;
+        color: #ffffff !important;
+        border: 1px solid rgba(255, 255, 255, 0.08) !important;
+        transition: all 0.2s ease-in-out;
+        width: 100%;
+        text-align: left;
     }
 
-        .pulse-btn:hover {
-            transform: translateY(-3px);
+        .showtime-row:hover {
+            background-color: #1a1e28 !important;
+            border-color: #ff6b00 !important;
+            box-shadow: 0 0 12px rgba(255, 107, 0, 0.25);
+            transform: translateX(4px);
+        }
+
+    .back-catalog-btn {
+        background-color: #14171f !important;
+        color: #e5e7eb !important;
+        border: 1px solid rgba(255, 255, 255, 0.12) !important;
+        transition: all 0.2s ease;
+    }
+
+        .back-catalog-btn:hover {
+            background-color: #1f232d !important;
+            color: #ffffff !important;
+            border-color: rgba(255, 255, 255, 0.25) !important;
         }
 </style>

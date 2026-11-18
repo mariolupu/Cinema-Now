@@ -19,7 +19,6 @@ namespace WebApplication1.Controllers
             _movieService = movieService;
         }
 
-        // Barem: Nota 2 - Panou de management pentru administrator
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Admin()
         {
@@ -27,7 +26,6 @@ namespace WebApplication1.Controllers
             return View(movies);
         }
 
-        // GET: MOVIES - Catalogul public
         public async Task<IActionResult> Index()
         {
             var movies = await _movieService.GetAllMoviesAsync();
@@ -35,7 +33,6 @@ namespace WebApplication1.Controllers
             return View(movies);
         }
 
-        // GET: Movies/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -51,7 +48,6 @@ namespace WebApplication1.Controllers
                 return NotFound();
             }
 
-            // Proiecțiile pentru acest film trimise în ViewBag
             var screenings = await _context.Screenings
                 .Where(s => s.MovieId == id)
                 .OrderBy(s => s.Showtime)
@@ -59,18 +55,15 @@ namespace WebApplication1.Controllers
 
             ViewBag.Screenings = screenings;
 
-            // Trimitem strict obiectul `movie` (Modelul corect de tip Movie)
             return View(movie);
         }
 
-        // GET: MOVIES/Create
         [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: MOVIES/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
@@ -97,7 +90,6 @@ namespace WebApplication1.Controllers
             return View(movie);
         }
 
-        // GET: MOVIES/Edit/5
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
@@ -114,7 +106,6 @@ namespace WebApplication1.Controllers
             return View(movie);
         }
 
-        // POST: MOVIES/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
@@ -148,7 +139,6 @@ namespace WebApplication1.Controllers
             return View(movie);
         }
 
-        // GET: MOVIES/Delete/5
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
@@ -167,7 +157,6 @@ namespace WebApplication1.Controllers
             return View(movie);
         }
 
-        // POST: MOVIES/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
@@ -190,7 +179,7 @@ namespace WebApplication1.Controllers
 
         public IActionResult Privacy()
         {
-            return View("~/Views/Shared/Privacy.cshtml"); // Sau simplu return View(); dacă e în Views/Movies
+            return View("~/Views/Shared/Privacy.cshtml"); 
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

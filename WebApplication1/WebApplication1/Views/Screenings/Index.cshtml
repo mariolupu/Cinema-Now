@@ -1,53 +1,276 @@
 ﻿@model IEnumerable<WebApplication1.Models.Screening>
 
 @{
-    ViewData["Title"] = "Manage Screenings";
+    ViewData["Title"] = "Screenings Schedule";
+
+    var selectedDateStr = Context.Request.Query["date"];
+    DateTime selectedDate = string.IsNullOrEmpty(selectedDateStr) ? DateTime.Today : DateTime.Parse(selectedDateStr);
+
+    int currentYear = selectedDate.Year;
+    int currentMonth = selectedDate.Month;
+    int daysInMonth = DateTime.DaysInMonth(currentYear, currentMonth);
+
+    DateTime firstDayOfMonth = new DateTime(currentYear, currentMonth, 1);
+    int startOffset = ((int)firstDayOfMonth.DayOfWeek + 6) % 7;
+
+    var datesWithScreenings = Model
+        .Where(s => s.Showtime.Year == currentYear && s.Showtime.Month == currentMonth)
+        .Select(s => s.Showtime.Day)
+        .Distinct()
+        .ToHashSet();
+
+    var halls = new List<string> { "Hall 1", "Hall 2", "Hall 3", "Hall 4", "Hall 5", "Hall 6", "Hall 7", "Hall 8" };
+    var hours = Enumerable.Range(12, 13).ToList(); 
+    int minBufferMinutes = 25;
 }
 
-<div class="container my-4 text-light">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h1 class="display-5 fw-bold text-white">🕒 Screenings Management</h1>
-            <p class="text-secondary">Manage movie showtimes and cinema halls.</p>
+<div class="container-fluid py-4 text-light px-4" style="min-height: 85vh;">
+    <div class="row align-items-center mb-4 g-4">
+        <div class="col-lg-7">
+            <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-2">
+                <h1 class="fw-bold text-white fs-3 m-0" style="letter-spacing: -0.5px;">🕒 Screenings Schedule</h1>
+                <a asp-action="Create" class="btn btn-sm px-4 py-2 rounded-2 fw-semibold schedule-add-btn">
+                    <i class="bi bi-plus-lg me-1"></i> Add Screening
+                </a>
+            </div>
+            <p class="text-secondary small mb-3">
+                Selected Date: <strong class="text-white">@selectedDate.ToString("dddd, dd MMM yyyy", System.Globalization.CultureInfo.InvariantCulture)</strong>
+            </p>
+            <div class="d-flex flex-wrap align-items-center gap-2">
+                <span class="badge schedule-badge-danger px-3 py-1.5">Overlap (< 0 min)</span>
+                <span class="badge schedule-badge-warning px-3 py-1.5">Short Gap (0–24 min)</span>
+                <span class="badge schedule-badge-success px-3 py-1.5">OK Gap (≥ @minBufferMinutes min)</span>
+            </div>
         </div>
-        <a asp-action="Create" class="btn btn-cinema-orange rounded-pill px-4 fw-bold shadow-sm">
-            + Add New Screening
-        </a>
+
+        <div class="col-lg-5">
+            <div class="card border-0 schedule-card rounded-3 p-3 shadow-sm">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="d-flex align-items-center gap-1">
+                        <a href="?date=@selectedDate.AddMonths(-1).ToString("yyyy-MM-dd")" class="btn btn-outline-secondary btn-sm fw-bold px-2 py-0 schedule-nav-btn">◀</a>
+                        <span class="fw-bold text-white small text-center" style="min-width: 90px;">
+                            @selectedDate.ToString("MMMM", System.Globalization.CultureInfo.InvariantCulture)
+                        </span>
+                        <a href="?date=@selectedDate.AddMonths(1).ToString("yyyy-MM-dd")" class="btn btn-outline-secondary btn-sm fw-bold px-2 py-0 schedule-nav-btn">▶</a>
+                    </div>
+
+                    <a href="?date=@DateTime.Today.ToString("yyyy-MM-dd")" class="btn btn-sm rounded-2 px-3 py-0 fw-semibold schedule-today-btn">
+                        Today
+                    </a>
+
+                    <div class="d-flex align-items-center gap-1">
+                        <a href="?date=@selectedDate.AddYears(-1).ToString("yyyy-MM-dd")" class="btn btn-outline-secondary btn-sm fw-bold px-2 py-0 schedule-nav-btn">◀</a>
+                        <span class="fw-bold text-cinema-orange small px-1">@currentYear</span>
+                        <a href="?date=@selectedDate.AddYears(1).ToString("yyyy-MM-dd")" class="btn btn-outline-secondary btn-sm fw-bold px-2 py-0 schedule-nav-btn">▶</a>
+                    </div>
+                </div>
+
+                <div class="calendar-grid text-center">
+                    <div class="cal-header text-secondary fw-semibold">Mon</div>
+                    <div class="cal-header text-secondary fw-semibold">Tue</div>
+                    <div class="cal-header text-secondary fw-semibold">Wed</div>
+                    <div class="cal-header text-secondary fw-semibold">Thu</div>
+                    <div class="cal-header text-secondary fw-semibold">Fri</div>
+                    <div class="cal-header text-secondary fw-semibold">Sat</div>
+                    <div class="cal-header text-secondary fw-semibold">Sun</div>
+
+                    @for (int empty = 0; empty < startOffset; empty++)
+                    {
+                        <div class="cal-empty"></div>
+                    }
+
+                    @for (int day = 1; day <= daysInMonth; day++)
+                    {
+                        var dateItem = new DateTime(currentYear, currentMonth, day);
+                        bool isSelected = day == selectedDate.Day;
+                        bool hasMovies = datesWithScreenings.Contains(day);
+
+                        <a href="?date=@dateItem.ToString("yyyy-MM-dd")"
+                           class="day-box text-decoration-none d-flex flex-column align-items-center justify-content-center rounded-2 fw-semibold @(isSelected ? "day-selected" : "day-normal")">
+                            <span>@day</span>
+                            @if (hasMovies)
+                            {
+                                <span class="dot-indicator @(isSelected ? "bg-white" : "bg-cinema-orange")"></span>
+                            }
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div class="card border-0 cinema-card-inner rounded-4 shadow-lg overflow-hidden">
-        <div class="card-body p-0">
-            <table class="table table-dark table-hover mb-0 align-middle">
-                <thead class="table-secondary text-dark">
+    <div class="card border-0 schedule-card rounded-3 shadow-lg overflow-hidden">
+        <div class="card-body p-0 table-responsive">
+            <table class="table table-dark table-bordered mb-0 align-middle text-center schedule-table">
+                <thead>
                     <tr>
-                        <th class="ps-4">Movie Title</th>
-                        <th>Showtime</th>
-                        <th>Hall Name</th>
-                        <th class="text-end pe-4">Actions</th>
+                        <th class="sticky-col py-3 fs-6 schedule-th-corner">Hour</th>
+                        @foreach (var hall in halls)
+                        {
+                            <th class="py-3 fs-6 hall-col schedule-th">@hall</th>
+                        }
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var item in Model)
+                    @for (int i = 0; i < hours.Count; i++)
                     {
+                        var hour = hours[i];
+                        var displayHour = hour == 24 ? 0 : hour;
+                        var timeLabel = $"{displayHour:D2}:00";
+                        DateTime slotStart = selectedDate.Date.AddHours(hour);
+                        DateTime slotEnd = slotStart.AddHours(1);
+
                         <tr>
-                            <td class="ps-4 fw-bold text-white">@(item.Movie?.Title ?? "N/A")</td>
-                            <td><span class="badge bg-warning text-dark px-3 py-2">@item.Showtime.ToString("dd MMM yyyy, HH:mm")</span></td>
-                            <td><span class="text-info fw-semibold">@item.HallName</span></td>
-                            <td class="text-end pe-4">
-                                <form asp-action="Delete" asp-route-id="@item.Id" method="post" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this screening?');">
-                                    @Html.AntiForgeryToken()
-                                    <button type="submit" class="btn btn-outline-danger btn-sm rounded-pill px-3">
-                                        Delete
-                                    </button>
-                                </form>
-                            </td>
+                            <td class="sticky-col fw-bold text-cinema-orange fs-6 schedule-hour-cell">@timeLabel</td>
+
+                            @foreach (var hall in halls)
+                            {
+                                var hallScreeningsToday = Model
+                                    .Where(s => s.HallName != null &&
+                                                s.HallName.Trim().StartsWith(hall, StringComparison.OrdinalIgnoreCase) &&
+                                                s.Showtime.Date == selectedDate.Date)
+                                    .OrderBy(s => s.Showtime)
+                                    .ToList();
+
+                                var screeningsInCell = hallScreeningsToday
+                                    .Where(s => s.Showtime.Hour == displayHour)
+                                    .ToList();
+
+                                <td class="hall-col p-2 schedule-cell">
+                                    @if (screeningsInCell.Any())
+                                    {
+                                        foreach (var screening in screeningsInCell)
+                                        {
+                                            int durationMin = screening.Movie?.Duration > 0 ? screening.Movie.Duration : 120;
+                                            int durH = durationMin / 60;
+                                            int durM = durationMin % 60;
+                                            string durText = durH > 0 ? $"{durH}h {durM:D2}m" : $"{durationMin}m";
+                                            DateTime endTime = screening.Showtime.AddMinutes(durationMin);
+
+                                            bool hasOverlap = hallScreeningsToday.Any(other =>
+                                            {
+                                                if (other.Id == screening.Id) return false;
+                                                int otherDur = other.Movie?.Duration > 0 ? other.Movie.Duration : 120;
+                                                DateTime otherEnd = other.Showtime.AddMinutes(otherDur);
+                                                return screening.Showtime < otherEnd && other.Showtime < endTime;
+                                            });
+
+                                            <div class="p-2.5 mb-2 rounded-2 @(hasOverlap ? "schedule-screening-overlap" : "schedule-screening-normal") border text-start shadow-sm screening-item">
+                                                <div class="fw-bold text-white small text-truncate mb-1" title="@(screening.Movie?.Title ?? "Movie #" + screening.MovieId)">
+                                                    @(screening.Movie?.Title ?? "Movie #" + screening.MovieId)
+                                                </div>
+                                                <div class="@(hasOverlap ? "text-danger" : "text-cinema-orange") fw-bold mb-2" style="font-size: 0.82rem;">
+                                                    <i class="bi bi-clock me-1"></i> @screening.Showtime.ToString("HH:mm") - @endTime.ToString("HH:mm")
+                                                </div>
+                                                <div class="d-flex justify-content-between align-items-center pt-1 border-top border-secondary border-opacity-10">
+                                                    <span class="badge schedule-badge-duration px-2 py-1">
+                                                        @durText
+                                                    </span>
+
+                                                    <form asp-action="Delete" asp-route-id="@screening.Id" method="post" class="d-inline" onsubmit="return confirm('Delete this screening?');">
+                                                        @Html.AntiForgeryToken()
+                                                        <button type="submit" class="btn btn-outline-danger btn-sm py-0 px-2 fw-semibold schedule-delete-btn">
+                                                            Delete
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span class="text-secondary opacity-25">—</span>
+                                    }
+                                </td>
+                            }
                         </tr>
-                    }
-                    @if (!Model.Any())
-                    {
-                        <tr>
-                            <td colspan="4" class="text-center py-4 text-secondary fst-italic">No screenings scheduled yet.</td>
-                        </tr>
+
+                        @if (i < hours.Count - 1)
+                        {
+                            <tr class="gap-row">
+                                <td class="sticky-col py-1.5 text-secondary fw-semibold schedule-gap-hour" style="font-size: 0.75rem;">
+                                    Gap
+                                </td>
+
+                                @foreach (var hall in halls)
+                                {
+                                    var hallScreeningsToday = Model
+                                        .Where(s => s.HallName != null &&
+                                                    s.HallName.Trim().StartsWith(hall, StringComparison.OrdinalIgnoreCase) &&
+                                                    s.Showtime.Date == selectedDate.Date)
+                                        .OrderBy(s => s.Showtime)
+                                        .ToList();
+
+                                    Screening? pairPrev = null;
+                                    Screening? pairNext = null;
+
+                                    for (int k = 0; k < hallScreeningsToday.Count - 1; k++)
+                                    {
+                                        var s1 = hallScreeningsToday[k];
+                                        var s2 = hallScreeningsToday[k + 1];
+                                        int d1 = s1.Movie?.Duration > 0 ? s1.Movie.Duration : 120;
+                                        DateTime e1 = s1.Showtime.AddMinutes(d1);
+
+                                        if (s2.Showtime >= slotEnd && s2.Showtime < slotEnd.AddHours(1))
+                                        {
+                                            pairPrev = s1;
+                                            pairNext = s2;
+                                            break;
+                                        }
+                                        else if (e1 >= slotStart && e1 <= slotEnd && s2.Showtime >= slotEnd)
+                                        {
+                                            pairPrev = s1;
+                                            pairNext = s2;
+                                            break;
+                                        }
+                                    }
+
+                                    <td class="hall-col py-1 px-2 schedule-gap-cell">
+                                        @if (pairPrev != null && pairNext != null)
+                                        {
+                                            int prevDur = pairPrev.Movie?.Duration > 0 ? pairPrev.Movie.Duration : 120;
+                                            DateTime prevEnd = pairPrev.Showtime.AddMinutes(prevDur);
+                                            int gapMinutes = (int)(pairNext.Showtime - prevEnd).TotalMinutes;
+
+                                            if (gapMinutes < 0)
+                                            {
+                                                <span class="badge schedule-badge-danger w-100 py-1 fw-bold" style="font-size: 0.75rem;">
+                                                    Overlap: @Math.Abs(gapMinutes)m
+                                                </span>
+                                            }
+                                            else if (gapMinutes < minBufferMinutes)
+                                            {
+                                                <span class="badge schedule-badge-warning w-100 py-1 fw-bold" style="font-size: 0.75rem;">
+                                                    +@gapMinutes min (Short)
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge schedule-badge-success w-100 py-1 fw-bold" style="font-size: 0.75rem;">
+                                                    +@gapMinutes min free
+                                                </span>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            var activeMovie = hallScreeningsToday.FirstOrDefault(s =>
+                                            {
+                                                int d = s.Movie?.Duration > 0 ? s.Movie.Duration : 120;
+                                                return s.Showtime < slotEnd && s.Showtime.AddMinutes(d) > slotEnd;
+                                            });
+
+                                            if (activeMovie != null)
+                                            {
+                                                int d = activeMovie.Movie?.Duration > 0 ? activeMovie.Movie.Duration : 120;
+                                                <span class="text-secondary small" style="font-size: 0.75rem;">
+                                                    Until @activeMovie.Showtime.AddMinutes(d).ToString("HH:mm")
+                                                </span>
+                                            }
+                                        }
+                                    </td>
+                                }
+                            </tr>
+                        }
                     }
                 </tbody>
             </table>
@@ -56,21 +279,214 @@
 </div>
 
 <style>
-    .btn-cinema-orange {
-        background-color: #ff6b00;
-        border-color: #ff6b00;
-        color: #fff;
-        transition: all 0.2s ease-in-out;
+    .text-cinema-orange {
+        color: #ff6b00 !important;
     }
 
-        .btn-cinema-orange:hover {
-            background-color: #e56000;
-            border-color: #e56000;
-            color: #fff;
+    .schedule-add-btn {
+        background-color: #ff6b00 !important;
+        border: 1px solid #ff6b00 !important;
+        color: #ffffff !important;
+        transition: all 0.2s ease;
+    }
+
+        .schedule-add-btn:hover {
+            background-color: #e56000 !important;
+            border-color: #e56000 !important;
+            box-shadow: 0 0 10px rgba(255, 107, 0, 0.4);
         }
 
-    .cinema-card-inner {
-        background-color: #161920 !important;
+    .schedule-card {
+        background-color: #0d0f14 !important;
         border: 1px solid rgba(255, 255, 255, 0.08) !important;
     }
+
+    .schedule-nav-btn {
+        background-color: #14171f !important;
+        border-color: rgba(255, 255, 255, 0.1) !important;
+        color: #9ca3af !important;
+    }
+
+        .schedule-nav-btn:hover {
+            background-color: #1a1e28 !important;
+            border-color: rgba(255, 255, 255, 0.2) !important;
+            color: #ffffff !important;
+        }
+
+    .schedule-today-btn {
+        background-color: #14171f !important;
+        border: 1px solid rgba(245, 158, 11, 0.3) !important;
+        color: #fbbf24 !important;
+        font-size: 0.78rem;
+    }
+
+        .schedule-today-btn:hover {
+            background-color: rgba(245, 158, 11, 0.15) !important;
+            border-color: #f59e0b !important;
+            color: #fbbf24 !important;
+        }
+
+    .calendar-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 4px;
+    }
+
+    .cal-header {
+        font-size: 0.75rem;
+        padding-bottom: 4px;
+    }
+
+    .day-box {
+        height: 36px;
+        font-size: 0.85rem;
+        transition: all 0.15s ease;
+    }
+
+    .day-normal {
+        background-color: #14171f;
+        color: #9ca3af;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+        .day-normal:hover {
+            background-color: #1a1e28;
+            color: #fff;
+            border-color: rgba(255, 107, 0, 0.4);
+        }
+
+    .day-selected {
+        background-color: #ff6b00;
+        color: #fff;
+        border: 1px solid #ff6b00;
+    }
+
+    .dot-indicator {
+        width: 4px;
+        height: 4px;
+        border-radius: 50%;
+        margin-top: 2px;
+    }
+
+    .schedule-table {
+        table-layout: fixed;
+        width: max-content;
+        min-width: 100%;
+        background-color: #0d0f14 !important;
+    }
+
+        .schedule-table th, .schedule-table td {
+            border-color: rgba(255, 255, 255, 0.08) !important;
+        }
+
+    .sticky-col {
+        position: sticky;
+        left: 0;
+        z-index: 2;
+        width: 85px;
+        min-width: 85px;
+        background-color: #0d0f14 !important;
+    }
+
+    .schedule-th-corner {
+        background-color: #14171f !important;
+        color: #9ca3af !important;
+        z-index: 3;
+        border-bottom: 2px solid rgba(255, 255, 255, 0.1) !important;
+    }
+
+    .schedule-th {
+        background-color: #14171f !important;
+        color: #ffffff !important;
+        border-bottom: 2px solid rgba(255, 255, 255, 0.1) !important;
+        font-weight: 600;
+    }
+
+    .schedule-hour-cell {
+        background-color: #14171f !important;
+        border-right: 1px solid rgba(255, 255, 255, 0.08) !important;
+    }
+
+    .hall-col {
+        width: 180px;
+        min-width: 180px;
+    }
+
+    .schedule-cell {
+        background-color: #0d0f14 !important;
+    }
+
+    .gap-row td {
+        border-top: 1px dashed rgba(255, 255, 255, 0.1) !important;
+        border-bottom: 1px dashed rgba(255, 255, 255, 0.1) !important;
+    }
+
+    .schedule-gap-hour {
+        background-color: #0d0f14 !important;
+        color: #6b7280 !important;
+    }
+
+    .schedule-gap-cell {
+        background-color: #0a0c10 !important;
+    }
+
+    .schedule-screening-normal {
+        background-color: #14171f !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    }
+
+    .schedule-screening-overlap {
+        background-color: rgba(239, 68, 68, 0.12) !important;
+        border: 1px solid rgba(239, 68, 68, 0.3) !important;
+    }
+
+    .screening-item {
+        transition: all 0.15s ease;
+    }
+
+        .screening-item:hover {
+            border-color: #ff6b00 !important;
+        }
+
+    .schedule-badge-danger {
+        background-color: rgba(239, 68, 68, 0.15) !important;
+        color: #f87171 !important;
+        border: 1px solid rgba(239, 68, 68, 0.3);
+        font-size: 0.75rem;
+    }
+
+    .schedule-badge-warning {
+        background-color: rgba(245, 158, 11, 0.15) !important;
+        color: #fbbf24 !important;
+        border: 1px solid rgba(245, 158, 11, 0.3);
+        font-size: 0.75rem;
+    }
+
+    .schedule-badge-success {
+        background-color: rgba(16, 185, 129, 0.15) !important;
+        color: #34d399 !important;
+        border: 1px solid rgba(16, 185, 129, 0.3);
+        font-size: 0.75rem;
+    }
+
+    .schedule-badge-duration {
+        background-color: #1a1e28 !important;
+        color: #9ca3af !important;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        font-size: 0.72rem;
+    }
+
+    .schedule-delete-btn {
+        background-color: transparent !important;
+        border-color: rgba(239, 68, 68, 0.3) !important;
+        color: #f87171 !important;
+        font-size: 0.72rem;
+        transition: all 0.2s ease;
+    }
+
+        .schedule-delete-btn:hover {
+            background-color: rgba(239, 68, 68, 0.15) !important;
+            border-color: #ef4444 !important;
+            color: #ef4444 !important;
+        }
 </style>

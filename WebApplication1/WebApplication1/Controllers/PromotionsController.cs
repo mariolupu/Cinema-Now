@@ -14,19 +14,16 @@ namespace WebApplication1.Controllers
             _context = context;
         }
 
-        // GET: Promotions (Admin List)
         public async Task<IActionResult> Index()
         {
             return View(await _context.Promotions.ToListAsync());
         }
 
-        // GET: Promotions/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Promotions/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Promotion promotion)
@@ -40,7 +37,6 @@ namespace WebApplication1.Controllers
             return View(promotion);
         }
 
-        // GET: Promotions/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null) return NotFound();
@@ -51,7 +47,6 @@ namespace WebApplication1.Controllers
             return View(promotion);
         }
 
-        // POST: Promotions/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

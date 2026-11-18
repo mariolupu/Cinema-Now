@@ -1,5 +1,4 @@
-﻿/* Anti-Aliasing și Smooth Rendering */
-.smooth-render, img, svg {
+﻿.smooth-render, img, svg {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     image-rendering: -webkit-optimize-contrast;
@@ -7,12 +6,10 @@
     shape-rendering: geometricPrecision;
 }
 
-/* Fundal general bogat */
 .main-cinema-bg {
-    background-color: #050507;
+    background-color: #050505;
 }
 
-/* Cercuri luminoase mari și mici difuze în fundal (Spotlight-uri de cinema multiple) */
 .cinema-spotlight {
     position: absolute;
     border-radius: 50%;
@@ -109,7 +106,7 @@
         display: none;
     }
 
-/* Săgeți fixate aproape de marginile tabului & ascunse la capete */
+/* Săgeți carusel */
 .slider-arrow {
     position: absolute;
     top: 50%;
@@ -150,7 +147,6 @@
     right: -28px;
 }
 
-/* Carusel Promovare Hero */
 .hero-tall {
     max-height: 540px;
 }
@@ -181,7 +177,6 @@
     transform: translateZ(0);
 }
 
-/* Indicatori albi */
 .carousel-indicators [data-bs-target] {
     background-color: #ffffff !important;
     opacity: 0.4;
@@ -221,7 +216,7 @@
 }
 
 .marketing-box {
-    background-color: rgba(18, 20, 26, 0.85) !important;
+    background-color: rgba(20, 22, 27, 0.92) !important;
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 107, 0, 0.25) !important;
     border-radius: 4px !important;
@@ -234,9 +229,8 @@
         box-shadow: 0 0.5rem 1.5rem rgba(255, 107, 0, 0.15);
     }
 
-/* Movie Card cu Border vizibil complet pe 4 laturi (inclusiv sus) */
 .movie-card {
-    background-color: rgba(18, 20, 26, 0.9) !important;
+    background-color: rgba(20, 22, 27, 0.95) !important;
     backdrop-filter: blur(8px);
     border: 1px solid rgba(255, 255, 255, 0.08) !important;
     border-radius: 6px !important;

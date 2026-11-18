@@ -20,5 +20,9 @@ namespace WebApplication1.Models
         public decimal TotalAmount { get; set; } = 0;
 
         public string? PaymentMethod { get; set; } = "Cash";
+        public bool IsCancelled { get; set; } = false;
+
+        public int StudentTickets { get; set; } = 0;
+        public int ChildTickets { get; set; } = 0;
     }
 }

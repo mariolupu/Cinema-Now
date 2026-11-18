@@ -7,7 +7,7 @@ using WebApplication1.Models;
 
 namespace WebApplication1.Controllers
 {
-    [Authorize(Roles = "Admin")] // Doar Administratorii pot gestiona orarele proiecțiilor
+    [Authorize(Roles = "Admin")]
     public class ScreeningsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -17,7 +17,6 @@ namespace WebApplication1.Controllers
             _context = context;
         }
 
-        // GET: Screenings
         public async Task<IActionResult> Index()
         {
             var screenings = await _context.Screenings
@@ -28,14 +27,12 @@ namespace WebApplication1.Controllers
             return View(screenings);
         }
 
-        // GET: Screenings/Create
         public IActionResult Create()
         {
             ViewData["MovieId"] = new SelectList(_context.Movies, "Id", "Title");
             return View();
         }
 
-        // POST: Screenings/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,MovieId,Showtime,HallName")] Screening screening)
@@ -50,7 +47,6 @@ namespace WebApplication1.Controllers
             return View(screening);
         }
 
-        // POST: Screenings/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

@@ -3,89 +3,170 @@
 @{
     ViewData["Title"] = "Book Seats - " + Model.Movie?.Title;
     var bookedSeats = ViewBag.BookedSeats as List<string> ?? new List<string>();
+    decimal ticketPrice = ViewBag.TicketPrice != null ? (decimal)ViewBag.TicketPrice : 5.00m;
+    decimal originalPrice = ViewBag.OriginalPrice != null ? (decimal)ViewBag.OriginalPrice : 5.00m;
+    string? appliedOffer = ViewBag.AppliedOffer as string;
 }
 
-<div class="container my-5 text-center text-light">
-    <div class="row justify-content-center">
-        <div class="col-lg-10">
-            <h1 class="fw-bold mb-2 text-white">🎟️ Cinema Seat Reservation</h1>
-            <p class="text-secondary fs-5 mb-4">
-                Movie: <span class="text-cinema-orange fw-bold">@Model.Movie?.Title</span> |
-                Time: <span class="text-white fw-semibold">@Model.Showtime.ToString("dd MMM yyyy, HH:mm")</span> |
-                Hall: <span class="badge bg-secondary px-2 py-1">@Model.HallName</span>
-            </p>
+<div class="container py-5 text-center text-light" style="max-width: 1000px; min-height: 85vh;">
+    <div class="card p-4 shadow-lg rounded-3 booking-main-card">
+        <div class="mb-4 pb-3 border-bottom border-secondary border-opacity-10 text-start d-flex flex-wrap justify-content-between align-items-center gap-3">
+            <div>
+                <h1 class="fw-bold text-white fs-3 m-0" style="letter-spacing: -0.5px;">🎟️ Cinema Seat Reservation</h1>
+                <p class="text-secondary small mb-0 mt-1">
+                    Movie: <strong class="text-cinema-orange">@Model.Movie?.Title</strong> •
+                    Time: <strong class="text-light">@Model.Showtime.ToString("dd MMM yyyy, HH:mm")</strong> •
+                    Hall: <span class="badge booking-badge-hall px-2 py-0.5">@Model.HallName</span>
+                </p>
+            </div>
+            <a asp-controller="Movies" asp-action="Index" class="btn btn-sm px-3 py-2 rounded-2 fw-semibold booking-btn-muted">
+                <i class="bi bi-arrow-left me-1"></i> Back to Catalog
+            </a>
+        </div>
 
-            @if (TempData["Error"] != null)
+        <div class="p-3 rounded-3 mb-4 d-flex flex-wrap justify-content-between align-items-center gap-2 text-start booking-price-banner">
+            <div class="d-flex align-items-center gap-2">
+                <i class="bi bi-tag-fill text-cinema-orange fs-5"></i>
+                <div>
+                    <span class="text-secondary small d-block">Standard Ticket Price for this Showtime</span>
+                    <div class="d-flex align-items-center gap-2">
+                        @if (ticketPrice < originalPrice)
+                        {
+                            <span class="text-secondary text-decoration-line-through small">@originalPrice.ToString("0.00") EUR</span>
+                            <strong class="text-white fs-5">@ticketPrice.ToString("0.00") EUR <span class="small fw-normal text-secondary">/ seat</span></strong>
+                        }
+                        else
+                        {
+                            <strong class="text-white fs-5">@ticketPrice.ToString("0.00") EUR <span class="small fw-normal text-secondary">/ seat</span></strong>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            @if (!string.IsNullOrEmpty(appliedOffer))
             {
-                <div class="alert alert-danger w-50 mx-auto rounded-1 shadow-sm border-0">@TempData["Error"]</div>
+                <span class="badge booking-badge-offer px-3 py-2 fw-semibold">
+                    <i class="bi bi-stars me-1"></i> Active Offer: @appliedOffer
+                </span>
             }
+        </div>
 
-            <!-- Ecranul cinematografului stilizat Dark & Orange -->
-            <div class="screen-container my-4">
-                <div class="screen">CINEMA SCREEN</div>
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger py-2 px-3 rounded-2 small mb-4" style="background-color: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: #f87171;">
+                <i class="bi bi-exclamation-triangle-fill me-1"></i> @TempData["Error"]
+            </div>
+        }
+
+        <div class="screen-container my-4">
+            <div class="screen">CINEMA SCREEN</div>
+        </div>
+
+        <div class="d-flex justify-content-center gap-4 mb-4 text-secondary small fw-semibold">
+            <div class="d-flex align-items-center gap-2">
+                <span class="seat-sample seat-available"></span> Available
+            </div>
+            <div class="d-flex align-items-center gap-2">
+                <span class="seat-sample seat-selected"></span> Selected
+            </div>
+            <div class="d-flex align-items-center gap-2">
+                <span class="seat-sample seat-occupied"></span> Occupied
+            </div>
+        </div>
+
+        <form asp-action="Book" method="post" id="bookingForm">
+            <input type="hidden" name="screeningId" value="@Model.Id" />
+            <input type="hidden" id="selectedSeatsInput" name="selectedSeats" />
+            <input type="hidden" id="studentCountInput" name="studentCount" value="0" />
+            <input type="hidden" id="childCountInput" name="childCount" value="0" />
+
+            <div class="seat-grid-container mx-auto mb-4 p-4 rounded-3 shadow-inner d-inline-block text-center booking-grid-box">
+                @Html.Raw(RenderSeatRow("A", 8, bookedSeats))
+                @Html.Raw(RenderSeatRow("B", 10, bookedSeats))
+                @Html.Raw(RenderSeatRow("C", 12, bookedSeats))
+                @Html.Raw(RenderSeatRow("D", 14, bookedSeats))
+                @Html.Raw(RenderSeatRow("E", 14, bookedSeats))
+                @Html.Raw(RenderSeatRow("F", 16, bookedSeats))
             </div>
 
-            <!-- Legendă -->
-            <div class="d-flex justify-content-center gap-4 mb-4 text-light small fw-semibold">
-                <div class="d-flex align-items-center gap-2">
-                    <span class="seat-sample seat-available"></span> Available
-                </div>
-                <div class="d-flex align-items-center gap-2">
-                    <span class="seat-sample seat-selected"></span> Selected
-                </div>
-                <div class="d-flex align-items-center gap-2">
-                    <span class="seat-sample seat-occupied"></span> Occupied
-                </div>
-            </div>
-
-            <!-- Hartă scaune pe fundal Gri Închis (#12141a) -->
-            <form asp-action="Book" method="post" id="bookingForm">
-                <input type="hidden" name="screeningId" value="@Model.Id" />
-                <input type="hidden" id="selectedSeatsInput" name="selectedSeats" />
-
-                <div class="seat-grid-container mx-auto mb-4 p-4 rounded-3 shadow-lg border border-secondary border-opacity-25 d-inline-block text-center" style="background-color: #12141a;">
-                    @Html.Raw(RenderSeatRow("A", 8, bookedSeats))
-                    @Html.Raw(RenderSeatRow("B", 10, bookedSeats))
-                    @Html.Raw(RenderSeatRow("C", 12, bookedSeats))
-                    @Html.Raw(RenderSeatRow("D", 14, bookedSeats))
-                    @Html.Raw(RenderSeatRow("E", 14, bookedSeats))
-                    @Html.Raw(RenderSeatRow("F", 16, bookedSeats))
+            <div class="card p-4 mx-auto rounded-3 text-center booking-checkout-box" style="max-width: 680px;">
+                <div class="row align-items-center mb-3 pb-3 border-bottom border-secondary border-opacity-10">
+                    <div class="col-sm-6 text-sm-start mb-2 mb-sm-0">
+                        <span class="text-secondary small d-block">Selected Seats (<span id="seatCountBadge">0</span>)</span>
+                        <span id="selectedSeatsText" class="text-cinema-orange fw-bold fs-6">None</span>
+                    </div>
+                    <div class="col-sm-6 text-sm-end">
+                        <span class="text-secondary small d-block">Total Amount</span>
+                        <span id="totalPriceText" class="text-white fw-bold fs-4">0.00 EUR</span>
+                    </div>
                 </div>
 
-                <!-- Panou de confirmare & Alegere Metodă de Plată -->
-                <div class="card border border-secondary border-opacity-25 shadow-lg p-4 w-75 mx-auto rounded-3 text-center mb-4" style="background-color: #161920;">
-                    <h5 class="text-white mb-3">Selected Seats: <span id="selectedSeatsText" class="text-cinema-orange fw-bold">None</span></h5>
+                <div class="text-start mb-3">
+                    <span class="text-secondary small fw-semibold d-block mb-2">Assign Discounted Tickets (Optional):</span>
 
-                    <!-- Alegere metodă de plată -->
-                    <div class="mb-4 d-flex justify-content-center gap-4 text-start">
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="paymentMethod" id="payStripe" value="Stripe" checked>
-                            <label class="form-check-label text-light fw-semibold small" for="payStripe">
-                                💳 Pay Online (Stripe)
-                            </label>
+                    <div class="row g-2">
+                        <div class="col-md-6">
+                            <div class="p-2.5 rounded-2 d-flex align-items-center justify-content-between booking-discount-box">
+                                <div>
+                                    <div class="text-light fw-semibold small">🎓 Student (<span class="text-cinema-orange">-25%</span>)</div>
+                                    <div class="text-secondary" style="font-size: 0.7rem;">Student ID required</div>
+                                </div>
+                                <div class="d-flex align-items-center gap-2">
+                                    <button type="button" class="btn btn-sm counter-btn" onclick="changeCount('student', -1)">−</button>
+                                    <span id="studentCountDisplay" class="fw-bold text-white px-1">0</span>
+                                    <button type="button" class="btn btn-sm counter-btn" onclick="changeCount('student', 1)">+</button>
+                                </div>
+                            </div>
                         </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="paymentMethod" id="payCash" value="Cash">
-                            <label class="form-check-label text-light fw-semibold small" for="payCash">
-                                🎟️ Pay at Counter (Cash)
-                            </label>
+
+                        <div class="col-md-6">
+                            <div class="p-2.5 rounded-2 d-flex align-items-center justify-content-between booking-discount-box">
+                                <div>
+                                    <div class="text-light fw-semibold small">🧒 Child Under 18 (<span class="text-cinema-orange">-50%</span>)</div>
+                                    <div class="text-secondary" style="font-size: 0.7rem;">Age verification at entry</div>
+                                </div>
+                                <div class="d-flex align-items-center gap-2">
+                                    <button type="button" class="btn btn-sm counter-btn" onclick="changeCount('child', -1)">−</button>
+                                    <span id="childCountDisplay" class="fw-bold text-white px-1">0</span>
+                                    <button type="button" class="btn btn-sm counter-btn" onclick="changeCount('child', 1)">+</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                    <button type="submit" class="btn btn-cinema-orange btn-lg px-5 py-2 rounded-1 fw-bold shadow-sm" onclick="prepareSubmit()">
-                        Confirm Booking 🚀
-                    </button>
+                    <div id="breakdownText" class="text-secondary small mt-2" style="font-size: 0.78rem;">
+                        Select seats above to customize ticket types.
+                    </div>
                 </div>
-            </form>
-        </div>
+
+                <div class="mb-4 d-flex justify-content-center gap-4 text-start pt-2 border-top border-secondary border-opacity-10">
+                    <div class="form-check">
+                        <input class="form-check-input booking-radio" type="radio" name="paymentMethod" id="payStripe" value="Stripe" checked>
+                        <label class="form-check-label text-light fw-semibold small" for="payStripe">
+                            💳 Pay Online (Stripe)
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input booking-radio" type="radio" name="paymentMethod" id="payCash" value="Cash">
+                        <label class="form-check-label text-light fw-semibold small" for="payCash">
+                            🎟️ Pay at Counter (Cash)
+                        </label>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn w-100 py-2.5 rounded-2 fw-semibold booking-submit-btn" onclick="prepareSubmit()">
+                    Confirm Booking <i class="bi bi-rocket-takeoff ms-1"></i>
+                </button>
+            </div>
+        </form>
     </div>
 </div>
 
 @functions {
     string RenderSeatRow(string rowLetter, int totalSeats, List<string> bookedSeats)
     {
-        var html = $"<div class='d-flex align-items-center justify-content-center mb-2 gap-1'>";
-        html += $"<span class='fw-bold text-cinema-orange me-3' style='width: 25px;'>{rowLetter}</span>";
+        var html = $"<div class='d-flex align-items-center justify-content-center mb-2 gap-1.5'>";
+        html += $"<span class='fw-bold text-cinema-orange me-3' style='width: 20px; font-size: 0.85rem;'>{rowLetter}</span>";
 
         int middle = totalSeats / 2;
         for (int i = 1; i <= totalSeats; i++)
@@ -95,7 +176,7 @@
 
             if (i == middle + 1)
             {
-                html += "<div style='width: 35px;'></div>";
+                html += "<div style='width: 30px;'></div>";
             }
 
             if (isBooked)
@@ -117,48 +198,78 @@
         color: #ff6b00 !important;
     }
 
+    .booking-main-card {
+        background-color: #0d0f14 !important;
+        border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    }
+
+    .booking-price-banner {
+        background-color: #14171f !important;
+        border: 1px solid rgba(255, 107, 0, 0.2) !important;
+    }
+
+    .booking-badge-offer {
+        background-color: rgba(16, 185, 129, 0.15) !important;
+        color: #34d399 !important;
+        border: 1px solid rgba(16, 185, 129, 0.3);
+        font-size: 0.78rem;
+    }
+
+    .booking-badge-hall {
+        background-color: #14171f !important;
+        color: #9ca3af !important;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        font-size: 0.75rem;
+    }
+
     .screen-container {
-        perspective: 500px;
+        perspective: 600px;
     }
 
     .screen {
         background: linear-gradient(to bottom, #ff6b00, #331500);
         color: white;
-        font-weight: 800;
-        letter-spacing: 4px;
-        padding: 10px;
-        width: 65%;
+        font-weight: 700;
+        font-size: 0.85rem;
+        letter-spacing: 3px;
+        padding: 8px;
+        width: 55%;
         margin: 0 auto;
         border-radius: 4px;
-        transform: rotateX(-20deg);
-        box-shadow: 0 10px 25px rgba(255, 107, 0, 0.3);
+        transform: rotateX(-15deg);
+        box-shadow: 0 8px 20px rgba(255, 107, 0, 0.25);
         border-bottom: 2px solid #ff6b00;
     }
 
     .seat-sample {
-        width: 18px;
-        height: 18px;
+        width: 16px;
+        height: 16px;
         display: inline-block;
-        border-radius: 4px;
+        border-radius: 3px;
+    }
+
+    .booking-grid-box {
+        background-color: #14171f !important;
+        border: 1px solid rgba(255, 255, 255, 0.08) !important;
     }
 
     .seat-btn {
-        width: 38px;
-        height: 38px;
-        font-size: 0.8rem;
+        width: 34px;
+        height: 34px;
+        font-size: 0.75rem;
         font-weight: 700;
         border-radius: 4px !important;
-        transition: all 0.2s ease-in-out;
+        transition: all 0.15s ease-in-out;
         padding: 0;
-        line-height: 38px;
+        line-height: 34px;
         outline: none !important;
         box-shadow: none !important;
     }
 
     .seat-available {
-        background-color: #262933 !important;
-        color: #ffffff !important;
-        border: 1px solid rgba(255, 255, 255, 0.15) !important;
+        background-color: #1a1e28 !important;
+        color: #9ca3af !important;
+        border: 1px solid rgba(255, 255, 255, 0.08) !important;
     }
 
         .seat-available:hover {
@@ -166,7 +277,7 @@
             border-color: #ff6b00 !important;
             color: #ffffff !important;
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(255, 107, 0, 0.4) !important;
+            box-shadow: 0 4px 10px rgba(255, 107, 0, 0.3) !important;
         }
 
     .seat-selected {
@@ -174,33 +285,87 @@
         color: #ffffff !important;
         border: 1px solid #ff6b00 !important;
         transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(255, 107, 0, 0.6) !important;
+        box-shadow: 0 4px 10px rgba(255, 107, 0, 0.5) !important;
     }
 
     .seat-occupied {
-        background-color: #000000 !important;
-        color: #444444 !important;
-        border: 1px solid #141414 !important;
+        background-color: #080a0e !important;
+        color: #4b5563 !important;
+        border: 1px solid rgba(255, 255, 255, 0.03) !important;
         cursor: not-allowed;
     }
 
-    .btn-cinema-orange {
+    .booking-checkout-box {
+        background-color: #14171f !important;
+        border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    }
+
+    .booking-discount-box {
+        background-color: #0d0f14 !important;
+        border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    }
+
+    .counter-btn {
+        width: 26px;
+        height: 26px;
+        padding: 0;
+        line-height: 24px;
+        background-color: #1a1e28 !important;
+        border: 1px solid rgba(255, 255, 255, 0.15) !important;
+        color: #ffffff !important;
+        font-weight: bold;
+        border-radius: 4px;
+    }
+
+        .counter-btn:hover {
+            background-color: #ff6b00 !important;
+            border-color: #ff6b00 !important;
+        }
+
+    .booking-radio {
+        background-color: #0d0f14 !important;
+        border-color: rgba(255, 255, 255, 0.2) !important;
+    }
+
+        .booking-radio:checked {
+            background-color: #ff6b00 !important;
+            border-color: #ff6b00 !important;
+        }
+
+    .booking-submit-btn {
         background-color: #ff6b00 !important;
         border: 1px solid #ff6b00 !important;
         color: #ffffff !important;
-        border-radius: 4px !important;
-        transition: all 0.2s ease-in-out;
+        font-size: 0.95rem;
+        transition: all 0.2s ease;
     }
 
-        .btn-cinema-orange:hover {
+        .booking-submit-btn:hover {
             background-color: #e56000 !important;
             border-color: #e56000 !important;
-            box-shadow: 0 0 15px rgba(255, 107, 0, 0.4);
+            box-shadow: 0 0 12px rgba(255, 107, 0, 0.4);
+        }
+
+    .booking-btn-muted {
+        background-color: #14171f !important;
+        border: 1px solid rgba(255, 255, 255, 0.08) !important;
+        color: #9ca3af !important;
+        font-size: 0.9rem;
+        transition: all 0.2s ease;
+    }
+
+        .booking-btn-muted:hover {
+            background-color: #1a1e28 !important;
+            color: #ffffff !important;
+            border-color: rgba(255, 255, 255, 0.2) !important;
         }
 </style>
 
 <script>
     let selectedSeats = [];
+    let studentCount = 0;
+    let childCount = 0;
+    const baseTicketPrice = @ticketPrice.ToString(System.Globalization.CultureInfo.InvariantCulture);
 
     function toggleSeat(button) {
         let seat = button.getAttribute("data-seat");
@@ -213,10 +378,62 @@
             button.classList.remove("seat-available");
             button.classList.add("seat-selected");
         }
-        document.getElementById("selectedSeatsText").innerText = selectedSeats.length > 0 ? selectedSeats.join(", ") : "None";
+
+        while (studentCount + childCount > selectedSeats.length) {
+            if (childCount > 0) childCount--;
+            else if (studentCount > 0) studentCount--;
+        }
+
+        updateSummary();
+    }
+
+    function changeCount(type, delta) {
+        if (selectedSeats.length === 0) return;
+
+        if (type === 'student') {
+            let next = studentCount + delta;
+            if (next >= 0 && (next + childCount) <= selectedSeats.length) {
+                studentCount = next;
+            }
+        } else if (type === 'child') {
+            let next = childCount + delta;
+            if (next >= 0 && (next + studentCount) <= selectedSeats.length) {
+                childCount = next;
+            }
+        }
+        updateSummary();
+    }
+
+    function updateSummary() {
+        let totalSeats = selectedSeats.length;
+        let standardCount = totalSeats - studentCount - childCount;
+
+        document.getElementById("seatCountBadge").innerText = totalSeats;
+        document.getElementById("selectedSeatsText").innerText = totalSeats > 0 ? selectedSeats.join(", ") : "None";
+        document.getElementById("studentCountDisplay").innerText = studentCount;
+        document.getElementById("childCountDisplay").innerText = childCount;
+
+        let standardTotal = standardCount * baseTicketPrice;
+        let studentTotal = studentCount * (baseTicketPrice * 0.75);
+        let childTotal = childCount * (baseTicketPrice * 0.50);
+        let total = standardTotal + studentTotal + childTotal;
+
+        document.getElementById("totalPriceText").innerText = total.toFixed(2) + " EUR";
+
+        if (totalSeats === 0) {
+            document.getElementById("breakdownText").innerText = "Select seats above to customize ticket types.";
+        } else {
+            let parts = [];
+            if (standardCount > 0) parts.push(`${standardCount}x Standard (${baseTicketPrice.toFixed(2)} EUR)`);
+            if (studentCount > 0) parts.push(`${studentCount}x Student (${(baseTicketPrice * 0.75).toFixed(2)} EUR)`);
+            if (childCount > 0) parts.push(`${childCount}x Child (under 18) (${(baseTicketPrice * 0.50).toFixed(2)} EUR)`);
+            document.getElementById("breakdownText").innerHTML = "Breakdown: <strong class='text-light'>" + parts.join(" + ") + "</strong>";
+        }
     }
 
     function prepareSubmit() {
         document.getElementById("selectedSeatsInput").value = selectedSeats.join(",");
+        document.getElementById("studentCountInput").value = studentCount;
+        document.getElementById("childCountInput").value = childCount;
     }
 </script>

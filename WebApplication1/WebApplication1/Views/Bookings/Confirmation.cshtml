@@ -2,56 +2,102 @@
 
 @{
     ViewData["Title"] = "Booking Confirmed";
+    var totalSeats = string.IsNullOrEmpty(Model.SeatNumbers) ? 0 : Model.SeatNumbers.Split(',', StringSplitOptions.RemoveEmptyEntries).Length;
+    var standardTickets = Math.Max(0, totalSeats - Model.StudentTickets - Model.ChildTickets);
 }
 
-<div class="container my-5 text-center text-light">
-    <div class="card border border-secondary border-opacity-25 shadow-lg p-4 p-md-5 rounded-3 text-light mx-auto" style="max-width: 650px; background-color: #12141a;">
-        <div class="display-1 text-cinema-orange mb-2">🎟️</div>
-        <h2 class="fw-bold text-white mb-2">Booking Confirmed Successfully!</h2>
-        <p class="text-secondary fs-6 mb-4">Thank you for choosing Cinema City. Your ticket is ready.</p>
+<div class="container py-5 text-center text-light" style="max-width: 650px; min-height: 85vh;">
+    <div class="card p-4 p-md-5 rounded-3 shadow-lg confirm-card">
+        <div class="display-3 text-cinema-orange mb-2">🎟️</div>
+        <h1 class="fw-bold text-white fs-3 mb-2" style="letter-spacing: -0.5px;">Booking Confirmed!</h1>
+        <p class="text-secondary small mb-4">Thank you for choosing <strong class="text-light">Cinema Now</strong>. Your digital ticket details are below.</p>
 
-        <!-- Ticket Stilizat Cinema City -->
-        <div class="p-4 rounded-3 text-start mb-4 shadow-sm border border-secondary border-opacity-25 position-relative overflow-hidden" style="background-color: #1a1d26;">
-            <div class="position-absolute top-0 start-0 bottom-0" style="width: 5px; background-color: #ff6b00;"></div>
+        <div class="p-4 rounded-3 text-start mb-4 position-relative overflow-hidden confirm-ticket-box">
+            <div class="position-absolute top-0 start-0 bottom-0" style="width: 4px; background-color: #ff6b00;"></div>
 
             <div class="ps-2">
-                <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom border-secondary border-opacity-25">
-                    <span class="fw-bold text-cinema-orange tracking-wide">CINEMA CITY TICKET</span>
-                    <span class="badge bg-secondary px-2 py-1">ID: #@Model.Id</span>
+                <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom border-secondary border-opacity-10">
+                    <span class="fw-bold text-cinema-orange small" style="letter-spacing: 1.5px;">CINEMA NOW TICKET</span>
+                    <span class="badge confirm-badge-id px-2.5 py-1">ID: #@Model.Id</span>
                 </div>
 
-                <div class="mb-2">
+                <div class="mb-3">
                     <span class="text-secondary small d-block">MOVIE</span>
-                    <strong class="fs-4 text-white">@Model.Screening?.Movie?.Title</strong>
+                    <strong class="fs-5 text-white">@Model.Screening?.Movie?.Title</strong>
                 </div>
 
-                <div class="row g-3 my-1">
+                <div class="row g-3 mb-3">
                     <div class="col-6">
                         <span class="text-secondary small d-block">DATE & TIME</span>
-                        <strong class="text-light">@Model.Screening?.Showtime.ToString("dd MMM yyyy, HH:mm")</strong>
+                        <strong class="text-light small">@Model.Screening?.Showtime.ToString("dd MMM yyyy, HH:mm")</strong>
                     </div>
                     <div class="col-6">
                         <span class="text-secondary small d-block">HALL</span>
-                        <strong class="text-light">@Model.Screening?.HallName</strong>
+                        <strong class="text-light small">@Model.Screening?.HallName</strong>
                     </div>
                 </div>
 
-                <div class="mt-3 pt-2 border-top border-secondary border-opacity-25 d-flex justify-content-between align-items-center">
-                    <div>
+                <div class="row g-3 mb-3 pt-2 border-top border-secondary border-opacity-10">
+                    <div class="col-6">
                         <span class="text-secondary small d-block">RESERVED SEATS</span>
-                        <span class="badge bg-cinema-orange fs-6 px-3 py-2 mt-1">@Model.SeatNumbers</span>
+                        <span class="badge bg-cinema-orange px-2.5 py-1 mt-1 fw-bold">@Model.SeatNumbers</span>
+                        <div class="text-secondary mt-1" style="font-size: 0.72rem;">
+                            @if (standardTickets > 0)
+                            {
+                                <span>@standardTickets Standard </span>
+                            }
+                            @if (Model.StudentTickets > 0)
+                            {
+                                <span>• @Model.StudentTickets Student </span>
+                            }
+                            @if (Model.ChildTickets > 0)
+                            {
+                                <span>• @Model.ChildTickets Child (under 18)</span>
+                            }
+                        </div>
                     </div>
-                    <div class="text-end">
-                        <span class="text-secondary small d-block">BOOKING DATE</span>
-                        <small class="text-secondary">@Model.BookingDate.ToString("dd MMM yyyy HH:mm")</small>
+                    <div class="col-6 text-end">
+                        <span class="text-secondary small d-block">TOTAL AMOUNT</span>
+                        <strong class="text-white fs-5">@Model.TotalAmount.ToString("0.00") EUR</strong>
                     </div>
                 </div>
+
+                <div class="pt-2 border-top border-secondary border-opacity-10 d-flex justify-content-between align-items-center">
+                    <div>
+                        <span class="text-secondary small d-block">PAYMENT STATUS</span>
+                        @if (Model.IsPaid)
+                        {
+                            <span class="badge confirm-badge-paid mt-1">Paid via @Model.PaymentMethod</span>
+                        }
+                        else
+                        {
+                            <span class="badge confirm-badge-pending mt-1">Pay at Counter (30 min prior)</span>
+                        }
+                    </div>
+                    <div class="text-end">
+                        <span class="text-secondary small d-block">BOOKED ON</span>
+                        <small class="text-secondary">@Model.BookingDate.ToString("dd.MM.yyyy HH:mm")</small>
+                    </div>
+                </div>
+
+                @if (Model.StudentTickets > 0)
+                {
+                    <div class="mt-3 p-2.5 rounded-2 d-flex align-items-start gap-2 confirm-student-alert">
+                        <i class="bi bi-person-vcard-fill text-cinema-orange fs-5"></i>
+                        <div class="small text-light lh-sm">
+                            <strong>Student Verification Required:</strong> Since this reservation includes <strong class="text-cinema-orange">@Model.StudentTickets student ticket(s)</strong>, valid student ID cards must be presented at the counter or to the cinema staff upon entry.
+                        </div>
+                    </div>
+                }
             </div>
         </div>
 
-        <div>
-            <a asp-controller="Movies" asp-action="Index" class="btn btn-cinema-orange btn-lg px-4 py-2 rounded-1 fw-bold shadow-sm">
-                ← Back to Movies Catalog
+        <div class="d-flex flex-wrap justify-content-center gap-2">
+            <a asp-controller="Bookings" asp-action="MyBookings" class="btn px-4 py-2 rounded-2 fw-semibold confirm-submit-btn">
+                View My Tickets
+            </a>
+            <a asp-controller="Movies" asp-action="Index" class="btn px-4 py-2 rounded-2 fw-semibold confirm-btn-muted">
+                Back to Catalog
             </a>
         </div>
     </div>
@@ -67,17 +113,67 @@
         color: #ffffff !important;
     }
 
-    .btn-cinema-orange {
+    .confirm-card {
+        background-color: #0d0f14 !important;
+        border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    }
+
+    .confirm-ticket-box {
+        background-color: #14171f !important;
+        border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    }
+
+    .confirm-student-alert {
+        background-color: rgba(255, 107, 0, 0.1) !important;
+        border: 1px solid rgba(255, 107, 0, 0.3) !important;
+    }
+
+    .confirm-badge-id {
+        background-color: #0d0f14 !important;
+        color: #9ca3af !important;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        font-size: 0.75rem;
+    }
+
+    .confirm-badge-paid {
+        background-color: rgba(16, 185, 129, 0.15) !important;
+        color: #34d399 !important;
+        border: 1px solid rgba(16, 185, 129, 0.3);
+        font-size: 0.75rem;
+    }
+
+    .confirm-badge-pending {
+        background-color: rgba(245, 158, 11, 0.15) !important;
+        color: #fbbf24 !important;
+        border: 1px solid rgba(245, 158, 11, 0.3);
+        font-size: 0.75rem;
+    }
+
+    .confirm-submit-btn {
         background-color: #ff6b00 !important;
         border: 1px solid #ff6b00 !important;
         color: #ffffff !important;
+        font-size: 0.9rem;
         transition: all 0.2s ease;
     }
 
-        .btn-cinema-orange:hover {
+        .confirm-submit-btn:hover {
             background-color: #e56000 !important;
             border-color: #e56000 !important;
+            box-shadow: 0 0 12px rgba(255, 107, 0, 0.4);
+        }
+
+    .confirm-btn-muted {
+        background-color: #14171f !important;
+        border: 1px solid rgba(255, 255, 255, 0.08) !important;
+        color: #9ca3af !important;
+        font-size: 0.9rem;
+        transition: all 0.2s ease;
+    }
+
+        .confirm-btn-muted:hover {
+            background-color: #1a1e28 !important;
             color: #ffffff !important;
-            box-shadow: 0 0 15px rgba(255, 107, 0, 0.4);
+            border-color: rgba(255, 255, 255, 0.2) !important;
         }
 </style>

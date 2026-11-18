@@ -4,79 +4,91 @@
     ViewData["Title"] = "Admin Dashboard - Movies";
 }
 
-<div class="container my-5 text-light">
-    <div class="d-flex justify-content-between align-items-center mb-4">
+<div class="container py-5 text-light" style="background-color: #050505; min-height: 85vh;">
+    <div class="d-flex justify-content-between align-items-center mb-5 flex-wrap gap-3">
         <div>
-            <h1 class="fw-bold text-white mb-1">⚙️ Admin Dashboard</h1>
-            <p class="text-secondary">Manage movie catalog, showtimes, and promotional offers.</p>
+            <h1 class="fw-bold text-white mb-1" style="font-size: 1.8rem; letter-spacing: -0.5px;">Admin Dashboard</h1>
+            <p class="text-secondary small mb-0">Manage movie catalog, showtimes, and promotional offers with absolute precision.</p>
         </div>
         <div class="d-flex gap-2 flex-wrap">
-            <a asp-action="Create" class="btn btn-success shadow-sm rounded-1 px-3 fw-semibold">
-                + Add New Movie
+            <a asp-action="Create" class="btn btn-sm px-3 py-2 rounded-2 fw-semibold admin-btn-primary">
+                <i class="bi bi-plus-lg me-1"></i> Add Movie
             </a>
-            <a asp-controller="Promotions" asp-action="Index" class="btn btn-warning shadow-sm rounded-1 px-3 fw-bold text-dark">
-                ✨ Manage Promotions
+            <a asp-controller="Promotions" asp-action="Index" class="btn btn-sm px-3 py-2 rounded-2 fw-semibold admin-btn-secondary">
+                <i class="bi bi-stars me-1"></i> Promotions
             </a>
-            <a asp-controller="Screenings" asp-action="Index" class="btn btn-outline-light rounded-1 px-3 shadow-sm">
-                📅 Manage Showtimes
+            <a asp-controller="Screenings" asp-action="Index" class="btn btn-sm px-3 py-2 rounded-2 fw-semibold admin-btn-secondary">
+                <i class="bi bi-calendar3 me-1"></i> Showtimes
             </a>
-            <a asp-action="Index" class="btn btn-outline-secondary shadow-sm rounded-1 px-3">
-                View Public Site
+            <a asp-action="Index" class="btn btn-sm px-3 py-2 rounded-2 fw-semibold admin-btn-muted">
+                <i class="bi bi-eye me-1"></i> Public Site
             </a>
         </div>
     </div>
 
     @if (Model != null && Model.Any())
     {
-        <div class="card border border-secondary border-opacity-25 rounded-3 overflow-hidden shadow-lg" style="background-color: #12141a;">
-            <div class="card-body p-0">
-                <table class="table table-dark table-hover align-middle mb-0">
-                    <thead style="background-color: #1a1d26;">
-                        <tr class="text-secondary">
-                            <th class="ps-4 py-3">Poster</th>
-                            <th class="py-3">Title</th>
-                            <th class="py-3">Genre</th>
-                            <th class="py-3">Home Section</th>
-                            <th class="py-3">Duration</th>
-                            <th class="py-3">Carousel Display</th>
-                            <th class="text-end pe-4 py-3">Actions</th>
+        <div class="admin-table-wrapper rounded-3 overflow-hidden shadow-sm">
+            <div class="table-responsive">
+                <table class="table table-dark align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th class="ps-4 py-3 text-secondary text-uppercase fw-bold" style="font-size: 0.7rem; letter-spacing: 0.5px;">Poster</th>
+                            <th class="py-3 text-secondary text-uppercase fw-bold" style="font-size: 0.7rem; letter-spacing: 0.5px;">Title</th>
+                            <th class="py-3 text-secondary text-uppercase fw-bold" style="font-size: 0.7rem; letter-spacing: 0.5px;">Genre</th>
+                            <th class="py-3 text-secondary text-uppercase fw-bold" style="font-size: 0.7rem; letter-spacing: 0.5px;">Home Section</th>
+                            <th class="py-3 text-secondary text-uppercase fw-bold" style="font-size: 0.7rem; letter-spacing: 0.5px;">Duration</th>
+                            <th class="py-3 text-secondary text-uppercase fw-bold" style="font-size: 0.7rem; letter-spacing: 0.5px;">Carousel Display</th>
+                            <th class="text-end pe-4 py-3 text-secondary text-uppercase fw-bold" style="font-size: 0.7rem; letter-spacing: 0.5px;">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach (var item in Model)
                         {
-                            <tr>
+                            <tr class="admin-table-row">
                                 <td class="ps-4 py-3">
-                                    <img src="@(string.IsNullOrEmpty(item.ImageUrl) ? "https://picsum.photos/50/50" : item.ImageUrl)"
-                                         class="rounded-1" style="width: 45px; height: 55px; object-fit: cover;" />
+                                    <div class="admin-poster-wrapper rounded-1 overflow-hidden">
+                                        <img src="@(string.IsNullOrEmpty(item.ImageUrl) ? "https://picsum.photos/50/50" : item.ImageUrl)"
+                                             class="w-100 h-100" style="object-fit: cover;" alt="@item.Title" />
+                                    </div>
                                 </td>
-                                <td class="fw-bold text-white">@item.Title</td>
-                                <td><span class="badge bg-secondary px-2 py-1">@item.Genre</span></td>
+                                <td class="fw-semibold text-white">@item.Title</td>
+                                <td>
+                                    <span class="badge admin-badge-neutral px-2 py-1">@item.Genre</span>
+                                </td>
                                 <td>
                                     @if (!string.IsNullOrEmpty(item.HomeSection))
                                     {
-                                        <span class="badge bg-cinema-orange px-2 py-1">@item.HomeSection</span>
+                                        <span class="badge admin-badge-orange px-2 py-1">@item.HomeSection</span>
                                     }
                                     else
                                     {
-                                        <span class="text-secondary fst-italic small">Standard</span>
+                                        <span class="text-secondary small fst-italic">Standard</span>
                                     }
                                 </td>
-                                <td class="text-light">@item.Duration min</td>
+                                <td class="text-light small">@item.Duration min</td>
                                 <td>
                                     @if (item.IsFeatured)
                                     {
-                                        <span class="badge bg-success px-2 py-1">⭐ In Carousel</span>
+                                        <span class="badge admin-badge-orange px-2 py-1"><i class="bi bi-star-fill me-1"></i> Featured</span>
                                     }
                                     else
                                     {
-                                        <span class="badge bg-dark text-secondary border border-secondary px-2 py-1">Standard List</span>
+                                        <span class="badge admin-badge-muted px-2 py-1">Standard</span>
                                     }
                                 </td>
                                 <td class="text-end pe-4">
-                                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary rounded-1 me-1">Edit</a>
-                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-info rounded-1 me-1">Details</a>
-                                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger rounded-1">Delete</a>
+                                    <div class="d-inline-flex gap-1">
+                                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm px-2 py-1 admin-action-btn" title="Edit">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm px-2 py-1 admin-action-btn" title="Details">
+                                            <i class="bi bi-info-circle"></i>
+                                        </a>
+                                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm px-2 py-1 admin-action-danger" title="Delete">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    </div>
                                 </td>
                             </tr>
                         }
@@ -87,17 +99,130 @@
     }
     else
     {
-        <div class="alert alert-dark text-center p-5 rounded-3 border border-secondary border-opacity-25 shadow-sm">
-            <h4 class="text-white mb-2">No movies found in database</h4>
-            <p class="text-secondary mb-3">Click below to create your first movie entry.</p>
-            <a asp-action="Create" class="btn btn-success rounded-1 px-4">+ Add New Movie</a>
+        <div class="text-center p-5 rounded-3 admin-empty-state">
+            <h4 class="text-white mb-2 fw-semibold">No movies found in database</h4>
+            <p class="text-secondary small mb-4">Get started by adding your first movie entry to the catalog.</p>
+            <a asp-action="Create" class="btn btn-sm px-4 py-2 rounded-2 fw-semibold admin-btn-primary">+ Add New Movie</a>
         </div>
     }
 </div>
 
 <style>
-    .bg-cinema-orange {
+    .admin-table-wrapper {
+        background-color: #0d0f14 !important;
+        border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    }
+
+    .table-dark {
+        background-color: transparent !important;
+        --bs-table-bg: transparent !important;
+        --bs-table-hover-bg: rgba(255, 255, 255, 0.02) !important;
+        color: #e5e7eb !important;
+        border-color: rgba(255, 255, 255, 0.06) !important;
+    }
+
+    .admin-table-row {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        transition: background-color 0.15s ease;
+    }
+
+    .admin-poster-wrapper {
+        width: 38px;
+        height: 48px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .admin-btn-primary {
         background-color: #ff6b00 !important;
+        border: 1px solid #ff6b00 !important;
         color: #ffffff !important;
+        transition: all 0.2s ease;
+    }
+
+        .admin-btn-primary:hover {
+            background-color: #e56000 !important;
+            border-color: #e56000 !important;
+            box-shadow: 0 0 10px rgba(255, 107, 0, 0.3);
+        }
+
+    .admin-btn-secondary {
+        background-color: #14171f !important;
+        border: 1px solid rgba(255, 255, 255, 0.12) !important;
+        color: #ffffff !important;
+        transition: all 0.2s ease;
+    }
+
+        .admin-btn-secondary:hover {
+            background-color: #1d212b !important;
+            border-color: #ff6b00 !important;
+            color: #ff6b00 !important;
+        }
+
+    .admin-btn-muted {
+        background-color: #14171f !important;
+        border: 1px solid rgba(255, 255, 255, 0.08) !important;
+        color: #9ca3af !important;
+        transition: all 0.2s ease;
+    }
+
+        .admin-btn-muted:hover {
+            background-color: #1a1e28 !important;
+            color: #ffffff !important;
+            border-color: rgba(255, 255, 255, 0.2) !important;
+        }
+
+    .admin-badge-neutral {
+        background-color: #14171f !important;
+        color: #9ca3af !important;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        font-weight: 500;
+        font-size: 0.7rem;
+    }
+
+    .admin-badge-orange {
+        background-color: rgba(255, 107, 0, 0.15) !important;
+        color: #ff6b00 !important;
+        border: 1px solid rgba(255, 107, 0, 0.3);
+        font-weight: 600;
+        font-size: 0.7rem;
+    }
+
+    .admin-badge-muted {
+        background-color: #14171f !important;
+        color: #6b7280 !important;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        font-weight: 500;
+        font-size: 0.7rem;
+    }
+
+    .admin-action-btn {
+        background-color: #14171f !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        color: #d1d5db !important;
+        transition: all 0.2s ease;
+    }
+
+        .admin-action-btn:hover {
+            background-color: #1f232d !important;
+            color: #ffffff !important;
+            border-color: rgba(255, 255, 255, 0.25) !important;
+        }
+
+    .admin-action-danger {
+        background-color: #14171f !important;
+        border: 1px solid rgba(239, 68, 68, 0.2) !important;
+        color: #f87171 !important;
+        transition: all 0.2s ease;
+    }
+
+        .admin-action-danger:hover {
+            background-color: rgba(239, 68, 68, 0.15) !important;
+            border-color: #ef4444 !important;
+            color: #ef4444 !important;
+        }
+
+    .admin-empty-state {
+        background-color: #0d0f14 !important;
+        border: 1px solid rgba(255, 255, 255, 0.08);
     }
 </style>

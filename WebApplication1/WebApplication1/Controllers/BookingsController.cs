@@ -23,25 +23,67 @@ namespace WebApplication1.Controllers
             _logger = logger;
         }
 
+        private async Task<(decimal BaseTicketPrice, decimal OriginalPrice, string? AppliedOffer)> GetBaseTicketPriceAsync(Screening screening)
+        {
+            decimal originalPrice = screening.Price > 0 ? screening.Price : 5.00m;
+            decimal currentPrice = originalPrice;
+            List<string> appliedDiscounts = new List<string>();
+
+            if (screening.Showtime.Hour < 17)
+            {
+                currentPrice *= 0.80m;
+                appliedDiscounts.Add("Matinee -20%");
+            }
+
+            string dayName = screening.Showtime.ToString("dddd", System.Globalization.CultureInfo.InvariantCulture);
+            var activePromos = await _context.Promotions
+                .Where(p => p.IsActive)
+                .ToListAsync();
+
+            var matchingPromo = activePromos.FirstOrDefault(p =>
+                string.IsNullOrEmpty(p.ApplicableDays) ||
+                p.ApplicableDays.Contains("All", StringComparison.OrdinalIgnoreCase) ||
+                p.ApplicableDays.Contains(dayName, StringComparison.OrdinalIgnoreCase));
+
+            if (matchingPromo != null)
+            {
+                if (matchingPromo.FixedPrice.HasValue && matchingPromo.FixedPrice.Value > 0)
+                {
+                    currentPrice = matchingPromo.FixedPrice.Value;
+                    appliedDiscounts.Clear();
+                    appliedDiscounts.Add($"{matchingPromo.Title} ({matchingPromo.FixedPrice.Value} RON)");
+                }
+                else if (matchingPromo.DiscountPercentage.HasValue && matchingPromo.DiscountPercentage.Value > 0)
+                {
+                    currentPrice = currentPrice * (1 - (matchingPromo.DiscountPercentage.Value / 100m));
+                    appliedDiscounts.Add($"{matchingPromo.Title} (-{matchingPromo.DiscountPercentage.Value}%)");
+                }
+            }
+
+            currentPrice = Math.Round(currentPrice, 2);
+            string? offerSummary = appliedDiscounts.Any() ? string.Join(" + ", appliedDiscounts) : null;
+
+            return (currentPrice, originalPrice, offerSummary);
+        }
+
         public async Task<IActionResult> Book(int id)
         {
             var screening = await _context.Screenings
                 .Include(s => s.Movie)
                 .FirstOrDefaultAsync(s => s.Id == id);
 
-            if (screening == null)
-            {
-                return NotFound();
-            }
+            if (screening == null) return NotFound();
 
+            var now = DateTime.Now;
             var existingBookings = await _context.Bookings
-                .Where(b => b.ScreeningId == id)
+                .Where(b => b.ScreeningId == id && !b.IsCancelled)
                 .ToListAsync();
 
             var bookedSeats = new List<string>();
             foreach (var b in existingBookings)
             {
-                if (!string.IsNullOrEmpty(b.SeatNumbers))
+                bool isExpired = !b.IsPaid && now > screening.Showtime.AddMinutes(30);
+                if (!isExpired && !string.IsNullOrEmpty(b.SeatNumbers))
                 {
                     var seats = b.SeatNumbers.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
                     foreach (var seat in seats)
@@ -51,13 +93,18 @@ namespace WebApplication1.Controllers
                 }
             }
 
+            var priceInfo = await GetBaseTicketPriceAsync(screening);
+            ViewBag.TicketPrice = priceInfo.BaseTicketPrice;
+            ViewBag.OriginalPrice = priceInfo.OriginalPrice;
+            ViewBag.AppliedOffer = priceInfo.AppliedOffer;
             ViewBag.BookedSeats = bookedSeats;
+
             return View(screening);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Book(int screeningId, string selectedSeats, string paymentMethod)
+        public async Task<IActionResult> Book(int screeningId, string selectedSeats, string paymentMethod, int studentCount = 0, int childCount = 0)
         {
             try
             {
@@ -73,9 +120,26 @@ namespace WebApplication1.Controllers
                 if (screening == null) return NotFound();
 
                 var seatList = selectedSeats.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-                int seatCount = seatList.Length;
-                decimal ticketPrice = 25.00m;
-                decimal totalAmount = seatCount * ticketPrice;
+                int totalSeats = seatList.Length;
+
+                studentCount = Math.Max(0, studentCount);
+                childCount = Math.Max(0, childCount);
+
+                if (studentCount + childCount > totalSeats)
+                {
+                    throw new CinemaException($"The number of Student ({studentCount}) and Child ({childCount}) tickets cannot exceed total selected seats ({totalSeats}).");
+                }
+
+                int standardCount = totalSeats - studentCount - childCount;
+
+                var priceInfo = await GetBaseTicketPriceAsync(screening);
+                decimal unitPrice = priceInfo.BaseTicketPrice;
+
+                decimal standardTotal = standardCount * unitPrice;
+                decimal studentTotal = studentCount * (unitPrice * 0.75m); // -25%
+                decimal childTotal = childCount * (unitPrice * 0.50m);     // -50%
+
+                decimal totalAmount = Math.Round(standardTotal + studentTotal + childTotal, 2);
 
                 var userId = _userManager.GetUserId(User);
                 if (string.IsNullOrEmpty(userId)) return Challenge();
@@ -98,21 +162,20 @@ namespace WebApplication1.Controllers
                                     ProductData = new SessionLineItemPriceDataProductDataOptions
                                     {
                                         Name = $"Cinema Now - {screening.Movie?.Title}",
-                                        Description = $"Hall: {screening.HallName} | Seats: {selectedSeats}"
+                                        Description = $"Hall: {screening.HallName} | Seats: {selectedSeats} (Std: {standardCount}, Student: {studentCount}, Child: {childCount})"
                                     },
                                 },
                                 Quantity = 1,
                             },
                         },
                         Mode = "payment",
-                        SuccessUrl = $"{domain}/Bookings/PaymentSuccess?screeningId={screeningId}&selectedSeats={Uri.EscapeDataString(selectedSeats)}&totalAmount={totalAmount}",
+                        SuccessUrl = $"{domain}/Bookings/PaymentSuccess?screeningId={screeningId}&selectedSeats={Uri.EscapeDataString(selectedSeats)}&totalAmount={totalAmount.ToString(System.Globalization.CultureInfo.InvariantCulture)}&studentCount={studentCount}&childCount={childCount}",
                         CancelUrl = $"{domain}/Bookings/Book/{screeningId}",
                     };
 
                     var service = new SessionService();
                     Session session = service.Create(options);
 
-                    _logger.LogInformation("User {Email} initiated Stripe checkout for screening {ScreeningId}.", User.Identity?.Name, screeningId);
                     return Redirect(session.Url);
                 }
 
@@ -124,24 +187,18 @@ namespace WebApplication1.Controllers
                     BookingDate = DateTime.Now,
                     TotalAmount = totalAmount,
                     IsPaid = false,
-                    PaymentMethod = "Cash"
+                    PaymentMethod = "Cash",
+                    StudentTickets = studentCount,
+                    ChildTickets = childCount
                 };
 
                 _context.Bookings.Add(booking);
                 await _context.SaveChangesAsync();
 
-                _logger.LogInformation("User {Email} successfully created a Cash booking (ID: {BookingId}) for screening {ScreeningId}.", User.Identity?.Name, booking.Id, screeningId);
                 return RedirectToAction("Confirmation", new { id = booking.Id });
-            }
-            catch (SeatUnavailableException ex)
-            {
-                _logger.LogWarning(ex, "Seat error: {Message}", ex.Message);
-                TempData["Error"] = ex.Message;
-                return RedirectToAction("Book", new { id = screeningId });
             }
             catch (CinemaException ex)
             {
-                _logger.LogWarning(ex, "Cinema business error: {Message}", ex.Message);
                 TempData["Error"] = ex.Message;
                 return RedirectToAction("Book", new { id = screeningId });
             }
@@ -162,10 +219,7 @@ namespace WebApplication1.Controllers
                 .ThenInclude(s => s.Movie)
                 .FirstOrDefaultAsync(b => b.Id == bookingId);
 
-            if (booking == null || booking.IsPaid)
-            {
-                return NotFound();
-            }
+            if (booking == null || booking.IsPaid) return NotFound();
 
             var domain = $"{Request.Scheme}://{Request.Host}";
             long amountInBani = (long)(booking.TotalAmount * 100);
@@ -179,7 +233,7 @@ namespace WebApplication1.Controllers
                         PriceData = new SessionLineItemPriceDataOptions
                         {
                             UnitAmount = amountInBani,
-                            Currency = "ron",
+                            Currency = "eur",
                             ProductData = new SessionLineItemPriceDataProductDataOptions
                             {
                                 Name = $"Cinema Now - {booking.Screening?.Movie?.Title}",
@@ -190,7 +244,7 @@ namespace WebApplication1.Controllers
                     },
                 },
                 Mode = "payment",
-                SuccessUrl = $"{domain}/Bookings/PaymentSuccess?screeningId={booking.ScreeningId}&selectedSeats={Uri.EscapeDataString(booking.SeatNumbers)}&totalAmount={booking.TotalAmount}",
+                SuccessUrl = $"{domain}/Bookings/PaymentSuccess?screeningId={booking.ScreeningId}&selectedSeats={Uri.EscapeDataString(booking.SeatNumbers)}&totalAmount={booking.TotalAmount.ToString(System.Globalization.CultureInfo.InvariantCulture)}&studentCount={booking.StudentTickets}&childCount={booking.ChildTickets}",
                 CancelUrl = $"{domain}/Bookings/MyBookings",
             };
 
@@ -214,12 +268,53 @@ namespace WebApplication1.Controllers
             return View(userBookings);
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CancelBooking(int id)
+        {
+            var userId = _userManager.GetUserId(User);
+
+            var booking = await _context.Bookings
+                .Include(b => b.Screening)
+                .FirstOrDefaultAsync(b => b.Id == id && b.UserId == userId);
+
+            if (booking == null) return NotFound();
+
+            if (booking.IsPaid)
+            {
+                TempData["Error"] = "Paid bookings cannot be cancelled online for refunds.";
+                return RedirectToAction(nameof(MyBookings));
+            }
+
+            booking.IsCancelled = true;
+            _context.Bookings.Update(booking);
+            await _context.SaveChangesAsync();
+
+            TempData["Success"] = "Reservation successfully cancelled.";
+            return RedirectToAction(nameof(MyBookings));
+        }
+
         [Authorize]
-        public async Task<IActionResult> PaymentSuccess(int screeningId, string selectedSeats, decimal totalAmount)
+        public async Task<IActionResult> PaymentSuccess(int screeningId, string selectedSeats, decimal totalAmount, int studentCount = 0, int childCount = 0)
         {
             var userId = _userManager.GetUserId(User);
             if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(selectedSeats))
             {
+                return RedirectToAction(nameof(MyBookings));
+            }
+
+            var existingPending = await _context.Bookings.FirstOrDefaultAsync(b =>
+                b.ScreeningId == screeningId &&
+                b.UserId == userId &&
+                b.SeatNumbers == selectedSeats &&
+                !b.IsPaid && !b.IsCancelled);
+
+            if (existingPending != null)
+            {
+                existingPending.IsPaid = true;
+                existingPending.PaymentMethod = "Stripe";
+                _context.Bookings.Update(existingPending);
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(MyBookings));
             }
 
@@ -237,15 +332,15 @@ namespace WebApplication1.Controllers
                     UserId = userId,
                     SeatNumbers = selectedSeats,
                     BookingDate = DateTime.Now,
-                    TotalAmount = totalAmount > 0 ? totalAmount : 25.00m,
+                    TotalAmount = totalAmount > 0 ? totalAmount : 5.00m,
                     IsPaid = true,
-                    PaymentMethod = "Stripe"
+                    PaymentMethod = "Stripe",
+                    StudentTickets = studentCount,
+                    ChildTickets = childCount
                 };
 
                 _context.Bookings.Add(booking);
                 await _context.SaveChangesAsync();
-
-                _logger.LogInformation("User {Email} completed a Stripe payment and created booking (ID: {BookingId}).", User.Identity?.Name, booking.Id);
             }
 
             return RedirectToAction(nameof(MyBookings));

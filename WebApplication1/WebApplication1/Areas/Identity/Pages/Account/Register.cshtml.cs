@@ -49,7 +49,6 @@ namespace WebApplication1.Areas.Identity.Pages.Account
 
         public IList<AuthenticationScheme>? ExternalLogins { get; set; }
 
-        // Proprietăți pentru CAPTCHA Dinamic (1-9)
         [BindProperty]
         public string? CaptchaExpected { get; set; }
 
@@ -83,7 +82,6 @@ namespace WebApplication1.Areas.Identity.Pages.Account
             ReturnUrl = returnUrl;
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
 
-            // Generăm o întrebare random (ex: 7 + 8) cu cifre de la 1 la 9
             GenerateNewCaptcha();
         }
 
@@ -92,13 +90,11 @@ namespace WebApplication1.Areas.Identity.Pages.Account
             returnUrl ??= Url.Content("~/");
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
 
-            // Validăm CAPTCHA dinamic
             if (string.IsNullOrWhiteSpace(Input.CaptchaAnswer) ||
                 string.IsNullOrWhiteSpace(CaptchaExpected) ||
                 Input.CaptchaAnswer.Trim() != CaptchaExpected)
             {
                 ModelState.AddModelError(string.Empty, "Security verification failed. Incorrect math answer.");
-                // Regenerăm altă întrebare dacă a greșit
                 GenerateNewCaptcha();
                 return Page();
             }
@@ -143,7 +139,6 @@ namespace WebApplication1.Areas.Identity.Pages.Account
                 }
             }
 
-            // Dacă a picat altă validare, refacem întrebarea
             GenerateNewCaptcha();
             return Page();
         }
@@ -151,10 +146,9 @@ namespace WebApplication1.Areas.Identity.Pages.Account
         private void GenerateNewCaptcha()
         {
             var rand = new Random();
-            int num1 = rand.Next(1, 10); // Între 1 și 9
-            int num2 = rand.Next(1, 10); // Între 1 și 9
+            int num1 = rand.Next(1, 10); 
+            int num2 = rand.Next(1, 10); 
 
-            // Putem face o adunare sau o scădere simplă (de ex. adunare)
             CaptchaQuestion = $"How much is {num1} + {num2}?";
             CaptchaExpected = (num1 + num2).ToString();
         }

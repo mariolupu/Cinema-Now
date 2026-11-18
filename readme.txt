@@ -29,7 +29,7 @@ de business (Dependency Injection).
 4) Autorizarea pe bază de roluri (Admin / User) prin atribute de securitate [Authorize].
 
 
-Nota 4 (3/4 Done. 4) trebuie verificat) 
+Nota 4 (Done) 
 
 1) Mostenire: Implementata printr-o ierarhie de clase personalizate pentru exceptii,
 unde clasa SeatUnavailableException mosteneste clasa parinte CinemaException.
@@ -42,7 +42,7 @@ pentru prezentarea dinamica a posterelor si filmelor.
 pe butoane, postere si elementele de selectie a scaunelor.
 
 
-Nota 5 ( 1/2 Done. trebuie verificat telefon la 2) )
+Nota 5 (Done )
 
 1) Organizarea stilurilor CSS: Proiectul contine multiple fisiere CSS dedicate
  (site.css, stiluri pentru pagina principala si bootstrap.min.css)
@@ -55,7 +55,15 @@ pentru carusel si slider-ul de filme.
 
 
 
+Nota 6 (Done)
 
+1) Proiectul contine un pachet dedicat de teste (WebApplication1.Tests)
+dezvoltat cu xUnit, incluzand 5+ teste unitare validate in Visual Studio.
+2) Codul sursa este complet gestionat prin Git, cu istoricul de commit-uri
+si datele sensibile protejate corespunzator (utilizand .NET User Secrets).
+3) Este configurat si functional un flux de lucru GitHub Actions
+(.github/workflows/dotnet.yml) care realizeaza automat restaurarea,
+ build-ul si rularea testelor unitare la fiecare push.
 
 
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WebApplication1.Models
 {
@@ -11,8 +12,11 @@ namespace WebApplication1.Models
         public Movie? Movie { get; set; }
 
         [Required]
-        public DateTime Showtime { get; set; } // Data și ora proiecției
+        public DateTime Showtime { get; set; } 
 
-        public string HallName { get; set; } = "Main Cinema??? (IMAX)";
+        public string HallName { get; set; } = "Hall 1";
+
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal Price { get; set; } = 30.00m; 
     }
 }
